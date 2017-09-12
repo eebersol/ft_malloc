@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: qdequele <qdequele@student.42.fr>          +#+  +:+       +#+         #
+#    By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 14:30:45 by qdequele          #+#    #+#              #
-#    Updated: 2016/11/06 20:23:04 by qdequele         ###   ########.fr        #
+#    Updated: 2017/09/12 17:38:07 by eebersol         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,23 +15,26 @@ ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s).so
 endif
 
-CFLAGS := -fPIC -O3 -g -Wall -Werror
+CFLAGS 	:= -fPIC -O3 -g -Wall -Werror
 
-CC := gcc
+CC 		:= gcc
 
-NAME := libft_malloc_$(HOSTTYPE)
+NAME 	:= libft_malloc_$(HOSTTYPE)
 
-SRC := main.c
+SRC 	:= 	main.c \
+			malloc.c \
+			init_struct.c
 
-LIB := libft/libft.a
+LIB 	:= libft/libft.a
 
-OBJ := $(SRC:.c=.o)
+OBJ 	:= $(SRC:.c=.o)
 
 PHONY: all libft clean fclean re
 
 all : libft $(NAME)
 
 $(NAME):  $(OBJ)
+	@make -C libft/
 	@$(CC) -shared -o $(NAME) $(OBJ) $(LIB)
 	@ln -s $(NAME) libft_malloc.so
 	@echo "!"

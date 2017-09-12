@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   init_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/12 17:38:07 by eebersol         ###   ########.fr       */
+/*   Created: 2016/03/02 15:21:13 by qdequele          #+#    #+#             */
+/*   Updated: 2017/09/12 17:38:08 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <malloc.h>
+#include "includes/malloc.h"
 
-void 	*malloc(size_t size)
+t_zone		*recover_zone(void)
 {
-	int *allocation;
+	static t_zone	zone;
 
-	printf("COUCOU\n");	
-	size += sizeof(size);
-	allocation = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0);
+	return (&zone);
+}
 
-	*allocation = size;
-	return (void*)(&allocation[0]);
+
+void		init_zone(void)
+{
+	t_zone		*zone;
+
+	zone = recover_zone();
+	zone->block = NULL;
 }

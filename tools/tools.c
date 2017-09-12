@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/12 17:38:07 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/12 17:38:09 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <malloc.h>
+#include "../includes/malloc.h"
 
-void 	*malloc(size_t size)
+void 	*smap(size_t len)
 {
-	int *allocation;
+	return (mmap(NULL, len, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0));
+}
 
-	printf("COUCOU\n");	
-	size += sizeof(size);
-	allocation = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0);
+t_block create_block(size_t len)
+{
+	t_block *block;
 
-	*allocation = size;
-	return (void*)(&allocation[0]);
+	block = smap(len)
+	block->size = len;
+	block->next = NULL;
+	block->free =0;
+	block->addr = ;
 }

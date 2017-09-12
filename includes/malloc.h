@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   malloc.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2016/10/18 13:38:10 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/12 17:38:06 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,13 @@
 # include <fcntl.h>
 
 
-# define TINY_BLOCK 10
-# define SMALL_BLOCK 100
-# define PAGE_SIZE sysconf(_SC_PAGESIZE)
+# define TINY_ZONE 8016
+# define TINY_BLOCK 80
+
+# define SMALL_ZONE 16384
+# define SMALL_BLOCK 163
+
+# define PAGE_SIZE getpagesize()
 
 typedef enum e_zone_type
 {
@@ -35,30 +39,29 @@ typedef enum e_zone_type
 } 			t_zone_type;
 
 typedef struct		s_block t_block;
-typedef struct		s_zone t_zone;
+typedef struct		s_zone 	t_zone;
 
 typedef struct		s_block
 {
 	int		 		size;
 	int 			free;
-	void			*ptr;
+	void			*addr;
 	t_block			*next;
 }					t_block;
 
 typedef struct		s_zone
 {
-	int		 		size;
+	void			*addr;
+	t_block			*block;
 	t_zone			*next;
 	t_zone_type 	type;
-	t_block			*blocks;
 }					t_zone;
 
-typedef struct		s_global
-{
-	t_zone			*zones;
-	int 			nbr_page;
-}					t_global;
+// INIT STRUCT
 
-t_global 			*global;
+t_zone		*recover_zone(void);
+void		init_zone(void);
+
+void 		*malloc(size_t size);
 
 #endif
