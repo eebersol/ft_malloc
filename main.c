@@ -6,15 +6,31 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/12 17:38:09 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/13 14:55:10 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-// void *mmap(void *addr, size_t length, int prot, int flags,
-//            int fd, off_t offset);
-
 #include "includes/malloc.h"
+
+
+static int		ft_lstcount(t_block *lst)
+{
+	int		i;
+	t_block	*elem;
+
+	i = 0;
+	elem = lst;
+	if (elem)
+	{
+		while (elem)
+		{
+			i++;
+			elem = elem->next;
+		}
+	}
+	return (i);
+}
+
 
 void 	*ft_malloc (size_t size)
 {
@@ -22,31 +38,33 @@ void 	*ft_malloc (size_t size)
 	int *allocation;
 
 	zone = recover_zone();
-	printf("COUCOU\n");	
 	size += sizeof(size);
-	allocation = mmap(NULL, size, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0);
+	allocation = smap(size);
 
 	*allocation = size;
-	// printf("%zu\n", size);
-	// printf("%p\n", (void*)(&allocation));
-	// printf("%ld\n", PAGE_SIZE);
 	return (void*)(&allocation[0]);
 }
 
 int main (int ac, char **av)
 {
-	char *str;
+	t_zone 	*zone;
+	t_block *begin;
 	int i;
 
 	init_zone();
-	// global = mmap(NULL, sizeof(t_global), PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0);
-	str = ft_malloc(sizeof(char*) * 50000);
+	zone = recover_zone();
+	begin = zone->block;
 	i = 0;
-	// while (i < 50000)
-	// {
-	// 	str[i] = 'a';
-	// 	printf(" LA %c %d\n",str[i], i);
-	// 	i++;
-	// }
+	zone->type = TINY;
+	printf("Begin, First Block : %p -- %d\n", begin->addr, begin->free);
+	while (i < 8) 
+	{
+		i++;
+		begin->next = create_block(1000);
+		begin = begin->next;
+		printf("Block xx : %p -- %d\n", begin->addr, begin->free);
+	}
+	printf("Size : begin : %d zone->block : %d\n", ft_lstcount(begin), ft_lstcount(zone->block));
+	show_alloc_meme();
 
 }

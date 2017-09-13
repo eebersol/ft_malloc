@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/12 17:38:06 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/13 15:20:25 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,18 @@ typedef struct		s_zone
 }					t_zone;
 
 // INIT STRUCT
-
 t_zone		*recover_zone(void);
 void		init_zone(void);
+void 		show_alloc_meme (void);
+size_t 		display_block (t_zone *zone);
+///////////////
 
 void 		*malloc(size_t size);
+
+// TOOLS
+void 		*smap(size_t len);
+t_block 	*create_block(size_t len);
+t_zone 		*create_zone();
+///////////////
 
 #endif
