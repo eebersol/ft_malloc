@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/13 14:55:10 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/13 15:27:58 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,24 @@ static int		ft_lstcount(t_block *lst)
 {
 	int		i;
 	t_block	*elem;
+
+	i = 0;
+	elem = lst;
+	if (elem)
+	{
+		while (elem)
+		{
+			i++;
+			elem = elem->next;
+		}
+	}
+	return (i);
+}
+
+static int		ft_lstcountzone(t_zone *lst)
+{
+	int		i;
+	t_zone	*elem;
 
 	i = 0;
 	elem = lst;
@@ -48,6 +66,7 @@ void 	*ft_malloc (size_t size)
 int main (int ac, char **av)
 {
 	t_zone 	*zone;
+	t_zone *tmpzone;
 	t_block *begin;
 	int i;
 
@@ -65,6 +84,9 @@ int main (int ac, char **av)
 		printf("Block xx : %p -- %d\n", begin->addr, begin->free);
 	}
 	printf("Size : begin : %d zone->block : %d\n", ft_lstcount(begin), ft_lstcount(zone->block));
+	tmpzone = zone;
+	tmpzone->next = create_zone();
+	printf("Size : ZONE : %d\n", ft_lstcountzone(tmpzone));
 	show_alloc_meme();
 
 }

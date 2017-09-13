@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/13 15:18:39 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/13 15:25:29 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ t_zone *create_zone()
 
 	zone 		= smap(sizeof(zone));
 	zone->addr 	= NULL;
-	zone->block = NULL:
+	zone->block = NULL;
 	zone->next 	= NULL;
-	zone->type 	= NULL:
 	return (zone);
 }
