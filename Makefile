@@ -21,34 +21,29 @@ CC 		:= gcc
 
 NAME 	:= libft_malloc_$(HOSTTYPE)
 
-SRC 	:= 	main.c \
-			malloc.c \
-			init_struct.c
+SRC 	:=  malloc.c \
+			init_struct.c \
+			tools.c \
+			show_alloc_mem.c
 
-LIB 	:= libft/libft.a
 
 OBJ 	:= $(SRC:.c=.o)
 
-PHONY: all libft clean fclean re
+PHONY: all  clean fclean re
 
-all : libft $(NAME)
+all : $(NAME)
 
 $(NAME):  $(OBJ)
-	@make -C libft/
-	@$(CC) -shared -o $(NAME) $(OBJ) $(LIB)
+	@$(CC) -shared -o $(NAME) $(OBJ)
 	@ln -s $(NAME) libft_malloc.so
-	@echo "!"
 	@echo "$(NAME) compiled\033[0m"
-
-libft :
-	@make -C libft/
+	@gcc main.c $(NAME)
 
 %.o : %.c
-	@$(CC) -c $(CFLAGS) -I./includes/ -I./libft/includes $<
+	@$(CC) -c $(CFLAGS) $< -I./includes/
 	@printf "\033[32m."
 
 clean :
-	@make -C libft/ clean
 	@/bin/rm -f $(OBJ)
 	@/bin/rm -f libft_malloc.so
 	@echo "\033[31m$(NAME) objects deleted\033[0m"
@@ -58,7 +53,6 @@ fclean : allclean
 	@echo "\033[31m$(NAME) deleted\033[0m"
 
 allclean :
-	@make -C libft/ fclean
 	@/bin/rm -f libft_malloc.so
 	@/bin/rm -f $(OBJ)
 	@echo "\033[31m$(NAME) objects deleted\033[0m"

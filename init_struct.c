@@ -6,24 +6,37 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/02 15:21:13 by qdequele          #+#    #+#             */
-/*   Updated: 2017/09/13 14:01:17 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/18 09:55:18 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/malloc.h"
 
-t_zone		*recover_zone (void)
+t_base		*recover_base (void)
 {
-	static t_zone	zone;
+	static t_base	base;
 
-	return (&zone);
+	return (&base);
+}
+
+t_global_ref		*recover_global_ref(void)
+{
+	static t_global_ref global_ref;
+
+	return (&global_ref);
+}
+
+void 	init_global_ref ()
+{
+	t_global_ref 	*global_ref;
+
+	global_ref = recover_global_ref();
 }
 
 
-void		init_zone (void)
+void 	init_base ()
 {
-	t_zone		*zone;
+	t_base 	*base;
 
-	zone = recover_zone();
-	zone->block = smap(sizeof(t_block));
+	base = recover_base();
 }
