@@ -22,6 +22,8 @@ int main (int ac, char **av)
 	init_base();
 	init_global_ref();
 	str = malloc(sizeof(char*) * 2);
+	printf("ICI\n");
+	show_alloc_meme();
 	// str = malloc(sizeof(char*) * 300);
 	// str = malloc(sizeof(char*) * 400);
 	// str = malloc(sizeof(char*) * 5000);

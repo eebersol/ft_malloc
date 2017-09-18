@@ -112,18 +112,19 @@ t_zone 	*create_zone()
 	while (i < zone->nbrBlock)
 	{
 		printf("Begin :: %p\n", begin);
+		*(int*)begin = 0;
 		// Set begin a 0 pour indiquer que le block est libre.
+		printf("Begin :: %p\n", begin);
 		if (ref->type == TINY)
-		{
-			printf("decale : %lu \n", (sizeof(int)) + TINY_BLOCK);
 			begin += (sizeof(int)) + TINY_BLOCK;
-		}
 		else if (ref->type == SMALL)
 			begin += (sizeof(int)) + SMALL_BLOCK;
 		else if (ref->type == LARGE)
 			begin += (sizeof(int)) + LARGE;
 		printf("End :: %p\n", begin);
+		// add +1 pour ne pas que les cases memoire s'enjambe
 		i++;
+		printf("[%d] < [%zu]\n", i, zone->nbrBlock);
 	}
 	return (zone);
 }
