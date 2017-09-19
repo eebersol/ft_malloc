@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/18 09:31:54 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/19 16:23:23 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,12 @@ typedef struct		s_zone 	t_zone;
 
 typedef struct		s_zone
 {
+	int 			test;
 	void			*addr;
 	t_zone			*next;
 	t_zone_type 	type;
 	size_t 			nbrBlock;
+	size_t 			nbrBlockUsed;
 }					t_zone;
 
 typedef struct 		s_base
@@ -64,25 +66,26 @@ typedef struct		s_global_ref
 	t_zone_type 	type;
 }					t_global_ref;
 
+// show_alloc_meme.c
+void 				show_alloc_meme(void);
+size_t 				display_block(t_zone *zone, t_zone_type type);
+int					ft_lstcount(t_zone *zone);
 
-// t_ref 				*g_ref;
-// INIT STRUCT
-void 	init_global_ref ();
+// malloc.c
+void 				*malloc(size_t size);
+void 				save_zone(t_base *base, t_zone *zoneList, t_global_ref *ref);
+
+// tools.c
+int					ft_lstcount(t_zone *zone);
+t_zone 				*create_zone(size_t size);
+size_t 				get_size_total(void);
+t_zone 				*select_zone(void);
+void 				*smap(size_t len);
+
+// init_struct.c
+void 				init_base(void);
+void 				init_global_ref(void);
+t_base				*recover_base(void);
 t_global_ref		*recover_global_ref(void);
-t_base		*recover_base(void);
-void		init_base(void);
-void 		show_alloc_meme (void);
-size_t 		display_block (t_zone *zone);
-///////////////
-
-void 		*malloc(size_t size);
-
-// TOOLS
-void 			*smap(size_t len);
-t_zone 			*create_zone();
-t_zone 			*select_zone();
-int				ft_lstcountzone(t_zone *lst);
-///////////////
-
 
 #endif

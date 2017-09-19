@@ -6,7 +6,7 @@
 #    By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 14:30:45 by qdequele          #+#    #+#              #
-#    Updated: 2017/09/12 17:38:07 by eebersol         ###   ########.fr        #
+#    Updated: 2017/09/19 15:50:19 by eebersol         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,13 +31,14 @@ OBJ 	:= $(SRC:.c=.o)
 
 PHONY: all  clean fclean re
 
-all : $(NAME)
+all : $(NAME) 
 
 $(NAME):  $(OBJ)
 	@$(CC) -shared -o $(NAME) $(OBJ)
 	@ln -s $(NAME) libft_malloc.so
 	@echo "$(NAME) compiled\033[0m"
 	@gcc main.c $(NAME)
+	@./a.out
 
 %.o : %.c
 	@$(CC) -c $(CFLAGS) $< -I./includes/
@@ -57,4 +58,4 @@ allclean :
 	@/bin/rm -f $(OBJ)
 	@echo "\033[31m$(NAME) objects deleted\033[0m"
 
-re : fclean all
+re : fclean all 
