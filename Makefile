@@ -6,7 +6,7 @@
 #    By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 14:30:45 by qdequele          #+#    #+#              #
-#    Updated: 2017/09/19 15:50:19 by eebersol         ###   ########.fr        #
+#    Updated: 2017/09/20 09:28:35 by eebersol         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,8 +24,9 @@ NAME 	:= libft_malloc_$(HOSTTYPE)
 SRC 	:=  malloc.c \
 			init_struct.c \
 			tools.c \
-			show_alloc_mem.c
-
+			show_alloc_mem.c \
+			free.c \
+			realloc.c
 
 OBJ 	:= $(SRC:.c=.o)
 

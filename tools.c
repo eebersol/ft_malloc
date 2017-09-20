@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/19 16:23:29 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/20 11:08:36 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_zone *select_zone()
 		return (NULL);
 }
 
-size_t 	get_size_total()
+size_t 	get_size_total(size_t size)
 {
 	t_global_ref 	*ref;
 	int 			i;
@@ -51,7 +51,7 @@ size_t 	get_size_total()
 	sizeTotal = 0;
 	sizeTotal 		= ref->type == TINY ?  (sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100) :
 						ref->type == SMALL ? (sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * 100) :
-							(sizeof(t_zone)) + ((sizeof(int) + LARGE_ZONE));
+							(sizeof(t_zone)) + ((sizeof(int) + size));
 	// if (ref->type == TINY)
 	// 	sizeTotal 	= (sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100);
 	// else if (ref->type == SMALL)
@@ -81,7 +81,7 @@ t_zone 	*create_zone(size_t size)
 
 	i 					= 0;
 	ref 				= recover_global_ref();
-	sizeTotal 			= get_size_total();
+	sizeTotal 			= get_size_total(size);
 
 	zone 	 			= ref->type == TINY ?  (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * sizeTotal)) :
 							ref->type == SMALL ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * sizeTotal)) :

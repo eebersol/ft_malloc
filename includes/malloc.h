@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/19 16:23:23 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/20 11:16:29 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@
 
 # define SMALL_ZONE 16384
 # define SMALL_BLOCK 163
-
-# define LARGE_ZONE 999
 
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 
@@ -56,9 +54,10 @@ typedef struct		s_zone
 
 typedef struct 		s_base
 {
-	t_zone 	*tiny;
-	t_zone 	*small;
-	t_zone 	*large;
+	void 			*last_realloc;
+	t_zone 			*tiny;
+	t_zone 			*small;
+	t_zone 			*large;
 }					t_base;
 
 typedef struct		s_global_ref
@@ -66,19 +65,28 @@ typedef struct		s_global_ref
 	t_zone_type 	type;
 }					t_global_ref;
 
+// malloc.c
+void 				*malloc(size_t size);
+void 				save_zone(t_base *base, t_zone *zoneList, t_global_ref *ref);
+
+// free.c
+int 				check_zone(t_zone *zone, void *ptr, int jump);
+void				free(void *ptr);
+
+// realloc.c
+void				*set_new_size(t_zone *zone, size_t size, t_zone_type type);
+int 				find_ptr(t_zone *zone, void *ptr, int jump);
+void 				*realloc(void *ptr, size_t size);
+
 // show_alloc_meme.c
 void 				show_alloc_meme(void);
 size_t 				display_block(t_zone *zone, t_zone_type type);
 int					ft_lstcount(t_zone *zone);
 
-// malloc.c
-void 				*malloc(size_t size);
-void 				save_zone(t_base *base, t_zone *zoneList, t_global_ref *ref);
-
 // tools.c
 int					ft_lstcount(t_zone *zone);
 t_zone 				*create_zone(size_t size);
-size_t 				get_size_total(void);
+size_t 				get_size_total(size_t size);
 t_zone 				*select_zone(void);
 void 				*smap(size_t len);
 

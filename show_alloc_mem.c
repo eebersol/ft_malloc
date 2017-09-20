@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/19 16:26:31 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/20 11:10:00 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ size_t display_block (t_zone *zone, t_zone_type type)
 			size_total += size;
 			printf("[%d] %p - %p : %d octets\n",i,  ptr, ptr  + sizeof(int) + *(int*)ptr, size);
 			ptr 		+= sizeof(int);
-			ptr 		+= type == TINY ? TINY_BLOCK : type == SMALL ?  SMALL_BLOCK : LARGE_ZONE;
+			ptr 		+= type == TINY ? TINY_BLOCK : type == SMALL ?  SMALL_BLOCK : size;
 		}
 		else
-			ptr 		+= (sizeof(int)) + type == TINY ? TINY_BLOCK : type == SMALL ? SMALL_BLOCK : LARGE;
+			ptr 		+= (sizeof(int)) + type == TINY ? TINY_BLOCK : type == SMALL ? SMALL_BLOCK : size;
 		// else if (type == TINY)
 		// 	ptr += (sizeof(int)) + TINY_BLOCK;
 		// else if (type == SMALL)
