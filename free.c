@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 14:56:37 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:40:41 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,35 +44,29 @@ void	del_zone(t_zone **zone, int at, int block_size, int nbr_block)
 
 t_zone 	*browse_zone(t_zone *zone, int block_size)
 {
-	t_zone 	*tmp_zone;
-	int 	i;
+	t_zone 		*tmp_zone;
+	int 		i;
 
-	tmp_zone 	= zone;
 	i 			= 0;
-	if (tmp_zone)
+	tmp_zone 	= zone;
+	while (tmp_zone)
 	{
-		while (tmp_zone)
+		if (tmp_zone->nbrBlockUsed == 0)
 		{
-			if (tmp_zone->nbrBlockUsed == 0)
-			{
-				del_zone(&zone, i,  block_size, tmp_zone->nbrBlock);
-				tmp_zone = zone;
-				if (ft_lstcount(zone) != 0)
-					browse_zone(tmp_zone, block_size);
-				else
-					return (NULL);
-				i = 0;
-
-			}
-			if (tmp_zone->next == NULL)
-				break;
-			tmp_zone = tmp_zone->next;
-			i++;
+			del_zone(&zone, i,  block_size, tmp_zone->nbrBlock);
+			tmp_zone = zone;
+			if (ft_lstcount(zone) != 0)
+				browse_zone(tmp_zone, block_size);
+			else
+				return (NULL);
+			i = 0;
 		}
-		return (zone);
+		if (tmp_zone->next == NULL)
+			break;
+		tmp_zone = tmp_zone->next;
+		i++;
 	}
-	else
-		return (tmp_zone);
+	return (zone);
 }
 
 void 	verify_zone(t_base *base)
@@ -93,18 +87,18 @@ void 	verify_zone(t_base *base)
 		base->large = browse_zone(large_tmp, 0);
 }
 
-int 	check_zone(t_zone *zone, void *ptr, int jump)
+int 	check_zone(t_zone *zone, void *ptr, int size_block)
 {
-	t_zone *tmpZone;
-	void 	*begin;
-	int 	i;
+	t_zone 		*tmpZone;
+	void 		*begin;
+	int 		i;
 
-	tmpZone = zone;
-	begin 	= tmpZone->addr;
+	tmpZone 	= zone;
+	begin 		= tmpZone->addr;
 	while (tmpZone)
 	{
-		i = 0;
-		begin = tmpZone->addr;
+		i 		= 0;
+		begin 	= tmpZone->addr;
 		while (i++ < tmpZone->nbrBlock)
 		{
 			if (begin + sizeof(int) == ptr)
@@ -113,13 +107,13 @@ int 	check_zone(t_zone *zone, void *ptr, int jump)
 				*(int*)begin  = 0;
 				return (1);
 			}
-			begin += jump + sizeof(int);
+			begin += size_block + sizeof(int);
 		}
 		if (tmpZone->next == NULL)
 			break;
 		tmpZone = tmpZone->next;
 	}
-	zone = tmpZone;
+	// zone = tmpZone; Norme vérifier que ce soit useless
 	return (0);
 }
 

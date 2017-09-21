@@ -6,125 +6,96 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/20 14:35:17 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:40:46 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/malloc.h"
 
-// peut-on mettre un ternaire dans un call de fonction pour set un des arg
-// realloc doit reallouer au meme endroit si cest possible
-void 	*set_new_size(t_zone *zone, size_t size, t_zone_type type)
+void			*modify_base(void *ptr, size_t new_size)
 {
-	t_zone *tmpZone;
-	void 	*begin;
-	int 	jump;
-	int 	i;
+	t_base 				*base;
 
-	tmpZone 	= zone;
-	begin 		= tmpZone->addr;
-	jump 		= type == 0 ? TINY_BLOCK : type == 1 ? SMALL_BLOCK : 0;
-	while (tmpZone)
+	base 				= recover_base();
+	base->type 			= base->realloc_type; 
+	base->realloc_src 	= ptr + sizeof(int);
+	base->realloc_size 	= new_size;
+	base->is_realloc 	= 1;
+	free(ptr+sizeof(int));
+	return(malloc(new_size));
+}
+
+void			*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int flag)
+{
+	void 		*ptr;
+	int 		i;
+
+	while (zone)
 	{
-		i 		= 0;
-		begin 	= tmpZone->addr;
-		while (i++ < tmpZone->nbrBlock)
-		{
-			if (*(int*)begin == 0)
+		i = 0;
+		ptr = zone->addr;
+		while (i++ < zone->nbrBlock)
+		{	
+			if (ptr + sizeof(int) == old_ptr && flag == 1)
 			{
-				tmpZone->nbrBlockUsed++;
-				*(int*)begin = (int)size;
-				return (begin + sizeof(int));
+				printf("Realloc no need, realloc\n");
+				*(int*)ptr = new_size;
+				return (ptr + sizeof(int));
 			}
-			begin += sizeof(int) + jump;
+			else if  (ptr + sizeof(int) == old_ptr && flag == 0)
+			{
+				printf("Realloc need, malloc -- new_size %zu\n", new_size);
+				return (modify_base(ptr, new_size));
+
+			}
+			ptr += get_size_type(zone->type) + sizeof(int);
 		}
-		if (tmpZone->next == NULL)
+		if (zone->next == NULL)
 			break;
-		tmpZone = tmpZone->next;
+		zone = zone->next;
 	}
 	return (NULL);
 }
 
-void 	*get_content(void *ptr, size_t size)
+void			*find_old_alloc(t_base *base, void *ptr, size_t new_size)
 {
-	t_base 	*base;
-	void 	*content;
-	int 	i;
-	int 	len;
+	t_zone 	*tmp_zone;
+	void 	*old_ptr;
+	int 	flag;
 
+	flag = 0;
+	old_ptr = NULL;
+	if (base->tiny && ft_lstcount(base->tiny) != 0)
+	{
+		printf("Realloc search in TINY zone.\n");
+		flag 		= base->realloc_type == TINY ? 1 : 0; 
+		tmp_zone 	= base->tiny;
+		old_ptr 	= browse_zone_realloc(tmp_zone, ptr, new_size, flag);
+		if (base->realloc_new_zone == 1)
+			return (old_ptr);
+	}
+	if (!old_ptr && base->small && ft_lstcount(base->small) != 0)
+	{
+		printf("Realloc search in SMALL zone. %p\n", ptr);
+		flag 		= base->realloc_type == SMALL ? 1 : 0; 
+		tmp_zone 	= base->small;
+		old_ptr 	= browse_zone_realloc(tmp_zone, ptr, new_size, flag);
+		if (base->realloc_new_zone == 1)
+			return (old_ptr);		
+	}
+	return (old_ptr);
+}
+
+void			*realloc(void *ptr, size_t size)
+{
+	t_base 				*base;
+	void 				*old_addr;
+
+	if (size == 0 || !ptr)
+		return (NULL);
+	printf("In realloc :  %zu octets.\n", size);
 	base 				= recover_base();
-	i 					= 0;
-	len 				= *(int*)ptr > size ? size : *(int*)ptr; 
-	base->last_realloc 	= ptr;
-	ptr 				+= sizeof(int);
-	while (i++ < len)
-	{
-		content = ptr;
-		content += 1;
-		ptr += 1;
-	}
-	base->last_realloc_content 	= content;
-	base->realloc_flag = 1;
-	return (content);
-}
-
-int 	find_ptr(t_zone *zone, void *ptr, int jump, size_t size)
-{
-	t_zone *tmpZone;
-	void 	*begin;
-	int 	i;
-
-	tmpZone 	= zone;
-	begin 		= tmpZone->addr;
-	while (tmpZone)
-	{
-		i 		= 0;
-		begin 	= tmpZone->addr;
-		while (i++ < tmpZone->nbrBlock)
-		{
-			if (begin + sizeof(int) == ptr)
-			{
-				printf("ICI\n");
-				get_content(begin, size);
-				return (*(int*)(begin));
-			}
-			begin += jump + sizeof(int);
-		}
-		if (tmpZone->next == NULL)
-			break;
-		tmpZone = tmpZone->next;
-	}
-	return (0);
-}
-
-void 	*realloc(void *ptr, size_t size)
-{
-	t_base 		*base;
-	t_zone 		*tmpZone;
-	t_zone_type newType;
-	t_zone_type oldType;
-	int 		actual_size;
-
-	base 		= recover_base();
-	actual_size = find_ptr(base->tiny, ptr, TINY_BLOCK, size);
-	actual_size = actual_size == 0 ? find_ptr(base->small, ptr, SMALL_BLOCK, size) : actual_size;
-	actual_size = actual_size == 0 ? find_ptr(base->large, ptr, 0, size) : actual_size;
-	oldType 	= actual_size < TINY_BLOCK ? TINY : actual_size < SMALL ? SMALL : LARGE;
-	newType 	= size < TINY_BLOCK ? TINY : size < SMALL ? SMALL : LARGE;
-	if (oldType == newType)
-	{
-		ptr 		= base->last_realloc;
-		ptr 		-= sizeof(int);
-		*(int*)ptr 	= size;
-		return (ptr + sizeof(int));
-	}
-	else
-	{
-		printf("MALLOC\n");
-		tmpZone 	= newType == 0 ? base->tiny : newType == 1 ? base->small : base->large;
-		ptr 		= set_new_size(tmpZone, size, newType);
-		if (ptr == NULL)
-			ptr 	= malloc(size);
-		return (ptr);
-	}
+	base->realloc_type 	= get_type(size);
+	old_addr 			= find_old_alloc(base, ptr, size);
+	return (old_addr);
 }
