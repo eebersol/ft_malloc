@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/20 11:16:29 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:06:52 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,45 +55,59 @@ typedef struct		s_zone
 typedef struct 		s_base
 {
 	void 			*last_realloc;
+	void			*last_realloc_content;
+	int				realloc_new_zone;
+	int 			realloc_flag;
+	void 			*realloc_content;
+	void 			*realloc_src;
+	size_t 			realloc_size;
+	int 			is_realloc;
+	t_zone_type 	realloc_type;
+	t_zone_type 	type;	
 	t_zone 			*tiny;
 	t_zone 			*small;
 	t_zone 			*large;
 }					t_base;
 
-typedef struct		s_global_ref
-{
-	t_zone_type 	type;
-}					t_global_ref;
-
 // malloc.c
+void				*malloc_memcpy(void *dst, const void *src, size_t n);
 void 				*malloc(size_t size);
-void 				save_zone(t_base *base, t_zone *zoneList, t_global_ref *ref);
+void 				save_zone(t_base *base, t_zone *zoneList);
 
 // free.c
+void				del_zone(t_zone **zone, int at, int block_size, int nbr_block);
+t_zone				*browse_zone(t_zone *zone, int block_size);
+void 				verify_zone(t_base *base);
 int 				check_zone(t_zone *zone, void *ptr, int jump);
 void				free(void *ptr);
 
 // realloc.c
-void				*set_new_size(t_zone *zone, size_t size, t_zone_type type);
-int 				find_ptr(t_zone *zone, void *ptr, int jump);
-void 				*realloc(void *ptr, size_t size);
+// void 				*get_content(void *ptr, size_t size);
+// void				*set_new_size(t_zone *zone, size_t size, t_zone_type type);
+// int 				find_ptr(t_zone *zone, void *ptr, int jump, size_t size);
+// void 				*realloc(void *ptr, size_t size);
 
+// realloc_true.c
+size_t 			get_size_type(t_zone_type type);
+t_zone_type 	get_type(size_t size);
+void			*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int flag);
+void 			*find_old_alloc(t_base *base, void *ptr, size_t new_size);
+void 			*realloc(void *ptr, size_t size);
 // show_alloc_meme.c
 void 				show_alloc_meme(void);
-size_t 				display_block(t_zone *zone, t_zone_type type);
+size_t 				display_block(t_zone *zone, int jump);
 int					ft_lstcount(t_zone *zone);
 
 // tools.c
+size_t 				get_size_zone(t_zone_type type, size_t size);
 int					ft_lstcount(t_zone *zone);
 t_zone 				*create_zone(size_t size);
-size_t 				get_size_total(size_t size);
+size_t 				get_nbr_block(size_t size);
 t_zone 				*select_zone(void);
 void 				*smap(size_t len);
 
 // init_struct.c
 void 				init_base(void);
-void 				init_global_ref(void);
 t_base				*recover_base(void);
-t_global_ref		*recover_global_ref(void);
 
 #endif

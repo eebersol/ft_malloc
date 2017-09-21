@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/20 09:39:20 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 14:24:30 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,35 @@ int main (int ac, char **av)
 	t_zone 		*zone;
 	int 		i;
 	char 		*str;
+	char 		*str2;
+	char 		*str3;
 	double 		k;
 
 	i = 0;
 
 	init_base();
-	init_global_ref();
-
-
-	k = 8.9;
-	while (i++ < 900)
+	// str = malloc(sizeof(char*) * 8);
+	// str2 = malloc(sizeof(char*) * 8);
+	// str3 = malloc(sizeof(char*) * 8);
+	// printf("NEXT FREE STR\n");
+	// free(str);
+	// printf("NEXT FREE STR1\n");
+	// free(str2);
+	// printf("NEXT FREE STR2\n");
+	// free(str3);
+	// printf("SALUT\n");
+	k = 7;
+	i = 0;
+	while (i++ < 50)
 	{
-		if (i > 200)
-			k = 6;
-		str = malloc(sizeof(char*) * k);
+			k = 10;
+		if (i == 49)
+		{
+			printf("ici\n");
+			str2 = malloc(sizeof(char*) * 11);
+		}
+		else
+			str = malloc(sizeof(char*) * k);
 	}
 	// i = 0;
 	// while (i++ < 900)
@@ -39,17 +54,13 @@ int main (int ac, char **av)
 	// 		k = 10;
 	// 	str = malloc(sizeof(char*) * k);
 	// }
-	// i = 0;
-	// while (i++ < 900)
-	// {
-	// 		k = 40;
-	// 	str = malloc(sizeof(char*) * k);
-	// }
-	// free(str);
-	realloc(str, sizeof(char*) * 40);
+	// show_alloc_meme();
+	// realloc(str, (sizeof(char*) * 12));
+	show_alloc_meme();
+	realloc(str, (sizeof(char*) * 8));
+	show_alloc_meme();
 	// str = malloc(sizeof(char*) * 2);
 	// str = malloc(sizeof(char*) * 4);
 	// str = malloc(sizeof(char*) * 8);
 	// str = malloc(sizeof(char*) * 6);
-	// show_alloc_meme();
 }

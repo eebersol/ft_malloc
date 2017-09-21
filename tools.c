@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/20 11:08:36 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:07:08 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,98 +25,67 @@ void 	*smap(size_t len)
 t_zone *select_zone()
 {
 	t_base 			*base;
-	t_global_ref 	*ref;
 
 	base 			= recover_base();
-	ref 			= recover_global_ref();
-	if (ref->type == TINY)
+	if (base->type == TINY)
 		return (base->tiny);
-	else if (ref->type == SMALL)
+	else if (base->type == SMALL)
 		return (base->small);
-	else if (ref->type == LARGE)
+	else if (base->type == LARGE)
 		return (base->large);
 	else
 		return (NULL);
 }
 
-size_t 	get_size_total(size_t size)
+size_t 	get_size_zone(t_zone_type type, size_t size)
 {
-	t_global_ref 	*ref;
-	int 			i;
-	int 			sizeTotal;
+	return (type == TINY ?  (sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100) :
+				type == SMALL ? (sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * 100) :
+					(sizeof(t_zone)) + ((sizeof(int) + size)));
+}
+
+size_t 	get_nbr_block(size_t size)
+{
+	t_base			*base;
+	int 			nbr_block;
+	int 			total_size;
 
 
-	i 				= 0;
-	ref 			= recover_global_ref();
-	sizeTotal = 0;
-	sizeTotal 		= ref->type == TINY ?  (sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100) :
-						ref->type == SMALL ? (sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * 100) :
-							(sizeof(t_zone)) + ((sizeof(int) + size));
-	// if (ref->type == TINY)
-	// 	sizeTotal 	= (sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100);
-	// else if (ref->type == SMALL)
-	// 	sizeTotal 	= (sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * 100);
-	// else if (ref->type == LARGE)
-	// 	sizeTotal 	= (sizeof(t_zone)) + ((sizeof(int) + LARGE_ZONE));
-	while (i * PAGE_SIZE < sizeTotal)
-		i++;
-	i 				*= PAGE_SIZE;
-	sizeTotal 		= ref->type == TINY ?  i/TINY_BLOCK : ref->type == SMALL ? i/SMALL_BLOCK :  i/LARGE;
-	// if (ref->type == TINY)
-	// 	sizeTotal = i/TINY_BLOCK;
-	// else if (ref->type == SMALL)
-	// 	sizeTotal = i/SMALL_BLOCK;
-	// else if (ref->type == LARGE)
-	// 	sizeTotal = i/LARGE;
-	return (sizeTotal);
+	base 			= recover_base();
+	total_size 		= 0;
+	nbr_block 		= get_size_zone(base->type, size);
+	while (total_size * PAGE_SIZE < nbr_block)
+		total_size++;
+	total_size 		*= PAGE_SIZE;
+	nbr_block 		= base->type == TINY ?  total_size/TINY_BLOCK : base->type == SMALL ? total_size/SMALL_BLOCK :  total_size/LARGE;
+	return (nbr_block);
 }
 
 t_zone 	*create_zone(size_t size)
 {
 	t_zone 				*zone;
-	t_global_ref 		*ref;
+	t_base 				*base;
 	size_t 				sizeTotal;
 	void 				*begin;
 	int 				i;
 
 	i 					= 0;
-	ref 				= recover_global_ref();
-	sizeTotal 			= get_size_total(size);
-
-	zone 	 			= ref->type == TINY ?  (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * sizeTotal)) :
-							ref->type == SMALL ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * sizeTotal)) :
+	sizeTotal 			= get_nbr_block(size);
+	base 				= recover_base();	
+	zone 	 			= base->type == TINY ?  (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * sizeTotal)) :
+							base->type == SMALL ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * sizeTotal)) :
 								(t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + size)));
-	// if (ref->type == TINY)
-	// 	zone 	= (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * sizeTotal));
-	// else if (ref->type == SMALL)
-	// {
-	// 	printf("Creation szone SMALL\n");
-	// 	zone = (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * sizeTotal));
-	// }
-	// else if (ref->type == LARGE)
-	// 	zone = (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + LARGE_ZONE)));
-	// else
-	// 	return (NULL);
-
 	zone->nbrBlockUsed = 0;
 	zone->addr 			= &zone[0] + sizeof(t_zone);
-	zone->nbrBlock 		= ref->type == LARGE ? 1 : sizeTotal;
+	zone->nbrBlock 		= base->type == LARGE ? 1 : sizeTotal;
 	zone->next 			= NULL;
-	begin 				= zone->addr; // Faut-il ajouter +1 pour sortir de la zone
+	zone->type 			= get_type(size);
+	begin 				= zone->addr;
 
-	while (i < zone->nbrBlock)
+	while (i++ < zone->nbrBlock)
 	{
 		*(int*)begin = 0;
-		begin 			+= ref->type == TINY ?  (sizeof(int)) + TINY_BLOCK :
-							ref->type == SMALL ? (sizeof(int)) + SMALL_BLOCK :
-								(sizeof(int)) + sizeof(LARGE);
-		// if (ref->type == TINY)
-		// 	begin += (sizeof(int)) + TINY_BLOCK;
-		// else if (ref->type == SMALL)
-		// 	begin += (sizeof(int)) + SMALL_BLOCK;
-		// else if (ref->type == LARGE)
-		// 	begin += (sizeof(int)) + sizeof(LARGE);
-		i++;
+		begin 			+= (base->type == TINY ? TINY_BLOCK : base->type == SMALL ? SMALL_BLOCK : size) + sizeof(int);
 	}
 	return (zone);
 }

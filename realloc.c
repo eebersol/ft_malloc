@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/20 11:24:23 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/20 14:35:17 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,30 @@ void 	*set_new_size(t_zone *zone, size_t size, t_zone_type type)
 	return (NULL);
 }
 
-int 	find_ptr(t_zone *zone, void *ptr, int jump)
+void 	*get_content(void *ptr, size_t size)
+{
+	t_base 	*base;
+	void 	*content;
+	int 	i;
+	int 	len;
+
+	base 				= recover_base();
+	i 					= 0;
+	len 				= *(int*)ptr > size ? size : *(int*)ptr; 
+	base->last_realloc 	= ptr;
+	ptr 				+= sizeof(int);
+	while (i++ < len)
+	{
+		content = ptr;
+		content += 1;
+		ptr += 1;
+	}
+	base->last_realloc_content 	= content;
+	base->realloc_flag = 1;
+	return (content);
+}
+
+int 	find_ptr(t_zone *zone, void *ptr, int jump, size_t size)
 {
 	t_zone *tmpZone;
 	void 	*begin;
@@ -61,7 +84,8 @@ int 	find_ptr(t_zone *zone, void *ptr, int jump)
 		{
 			if (begin + sizeof(int) == ptr)
 			{
-				recover_base()->last_realloc = begin;
+				printf("ICI\n");
+				get_content(begin, size);
 				return (*(int*)(begin));
 			}
 			begin += jump + sizeof(int);
@@ -81,12 +105,10 @@ void 	*realloc(void *ptr, size_t size)
 	t_zone_type oldType;
 	int 		actual_size;
 
-	if (ptr == NULL)
-		return (ptr)
 	base 		= recover_base();
-	actual_size = find_ptr(base->tiny, ptr, TINY_BLOCK);
-	actual_size = actual_size == 0 ? find_ptr(base->small, ptr, SMALL_BLOCK) : actual_size;
-	actual_size = actual_size == 0 ? find_ptr(base->large, ptr, 0) : actual_size;
+	actual_size = find_ptr(base->tiny, ptr, TINY_BLOCK, size);
+	actual_size = actual_size == 0 ? find_ptr(base->small, ptr, SMALL_BLOCK, size) : actual_size;
+	actual_size = actual_size == 0 ? find_ptr(base->large, ptr, 0, size) : actual_size;
 	oldType 	= actual_size < TINY_BLOCK ? TINY : actual_size < SMALL ? SMALL : LARGE;
 	newType 	= size < TINY_BLOCK ? TINY : size < SMALL ? SMALL : LARGE;
 	if (oldType == newType)
@@ -98,6 +120,7 @@ void 	*realloc(void *ptr, size_t size)
 	}
 	else
 	{
+		printf("MALLOC\n");
 		tmpZone 	= newType == 0 ? base->tiny : newType == 1 ? base->small : base->large;
 		ptr 		= set_new_size(tmpZone, size, newType);
 		if (ptr == NULL)

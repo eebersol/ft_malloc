@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/02 15:21:13 by qdequele          #+#    #+#             */
-/*   Updated: 2017/09/18 09:55:18 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/20 11:36:12 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,6 @@ t_base		*recover_base (void)
 
 	return (&base);
 }
-
-t_global_ref		*recover_global_ref(void)
-{
-	static t_global_ref global_ref;
-
-	return (&global_ref);
-}
-
-void 	init_global_ref ()
-{
-	t_global_ref 	*global_ref;
-
-	global_ref = recover_global_ref();
-}
-
 
 void 	init_base ()
 {

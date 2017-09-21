@@ -6,14 +6,14 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/20 11:10:00 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 14:03:53 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "includes/malloc.h"
 
-size_t display_block (t_zone *zone, t_zone_type type)
+size_t display_block (t_zone *zone, int jump)
 {
 	size_t 				size_zone;
 	void 				*ptr;
@@ -26,75 +26,79 @@ size_t display_block (t_zone *zone, t_zone_type type)
 	size_zone 			= 0;
 	size_total 			= 0;
 	ptr 				= zone->addr;
-	while (i < zone->nbrBlock)
+	while (i++ < zone->nbrBlock)
 	{
 		if (*(int*)ptr != 0)
 		{
 			size 		= *(int*)ptr;
-			size_total += size;
-			printf("[%d] %p - %p : %d octets\n",i,  ptr, ptr  + sizeof(int) + *(int*)ptr, size);
+			printf("   [%d] %p - %p : %d octets\n",i, ptr  + sizeof(int), ptr + jump + sizeof(int), *(int*)ptr);
 			ptr 		+= sizeof(int);
-			ptr 		+= type == TINY ? TINY_BLOCK : type == SMALL ?  SMALL_BLOCK : size;
+			jump 		= jump == 0 ? size : jump;
+			ptr 		+= jump;
+			size_total += size;
 		}
 		else
-			ptr 		+= (sizeof(int)) + type == TINY ? TINY_BLOCK : type == SMALL ? SMALL_BLOCK : size;
-		// else if (type == TINY)
-		// 	ptr += (sizeof(int)) + TINY_BLOCK;
-		// else if (type == SMALL)
-		// {
-		// 	ptr += (sizeof(int)) + SMALL_BLOCK;
-		// }
-		// else if (type == LARGE)
-		// 	ptr += (sizeof(int)) + sizeof(LARGE);
-		i++;
+			ptr 		+= (sizeof(int)) + jump;
 	}
 	return (size_total);
 }
 
 void show_alloc_meme ()
 {
-	t_global_ref *ref;
 	t_base 		*base;
 	t_zone 		*zone;
 	size_t 		size_total;
+	int 		jump;
 	int 		i;
 
 	zone 		= NULL;
-	ref = recover_global_ref();
-	base = recover_base();
+	base 		= recover_base();
 	size_total 	= 0;
-	i = 0;
-	printf("Show_alloc_meme : \n");
+	i 			= 0;
+	jump 		= 0;
+	printf("\n-----------------------------------------------------\n\n");
+	printf("Show_alloc_meme : \n\n");
 	printf("Len tiny  : [%d] \n", ft_lstcount(base->tiny));
 	printf("Len small : [%d] \n", ft_lstcount(base->small));
 	printf("Len large : [%d] \n", ft_lstcount(base->large));
+
 	if (base)
 	{
-		while (base->tiny)
+		zone = base->tiny;
+		jump = TINY_BLOCK;
+		while (zone)
 		{
-			printf(" [%d] TINY : %p\n", i, base->tiny->addr);
-			size_total += display_block(base->tiny, ref->type);
-			if (base->tiny->next == NULL)
+			printf("\n- n°%d TINY : %p -\n\n", i, zone->addr);
+			size_total += display_block(zone, jump);
+			if (zone->next == NULL)
 				break ;
-			base->tiny = base->tiny->next;
+			zone = zone->next;
 			i++;
 		}
-		while (base->small)
+		zone = base->small;
+		jump = SMALL_BLOCK;
+		i = 0;
+		while (zone)
 		{
-			printf("SMALL : %p\n", base->small->addr);
-			size_total += display_block(base->small, ref->type);
-			if (base->small->next == NULL)
+			printf("\n- n°%d SMALL : %p -\n\n", i, zone->addr);
+			size_total += display_block(zone, jump);
+			if (zone->next == NULL)
 				break ;
-			base->small = base->small->next;
+			zone = zone->next;
+			i++;
 		}
-		while (base->large)
+		zone = base->large;
+		i= 0;
+		while (zone)
 		{
-			printf("LARGE : %p\n", base->large->addr);
-			size_total += display_block(base->large, ref->type);
-			if (base->large->next == NULL)
+			printf("\n- n°%d LARGE : %p -\n\n", i, zone->addr);
+			size_total += display_block(zone, jump);
+			if (zone->next == NULL)
 				break ;
-			base->large = base->large->next;
+			zone = zone->next;
+			i++;
 		}
 	}
-	printf("Total : %lu octets\n", size_total);
+	printf("\nTotal : %lu octets\n", size_total);
+	printf("\n-----------------------------------------------------\n");
 }
