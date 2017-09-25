@@ -6,12 +6,14 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 14:24:30 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/25 14:53:35 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/malloc.h"
 
+// Test Realloc avec le falg realloc_new_zone
+// gérer LARGE avec Realloc
 
 int main (int ac, char **av)
 {
@@ -43,7 +45,7 @@ int main (int ac, char **av)
 		if (i == 49)
 		{
 			printf("ici\n");
-			str2 = malloc(sizeof(char*) * 11);
+			str2 = malloc(sizeof(char*) * 10);
 		}
 		else
 			str = malloc(sizeof(char*) * k);
@@ -56,8 +58,10 @@ int main (int ac, char **av)
 	// }
 	// show_alloc_meme();
 	// realloc(str, (sizeof(char*) * 12));
-	show_alloc_meme();
+	// show_alloc_meme();
 	realloc(str, (sizeof(char*) * 8));
+	printf("ADDR %p\n", str);
+	// free(str2);
 	show_alloc_meme();
 	// str = malloc(sizeof(char*) * 2);
 	// str = malloc(sizeof(char*) * 4);

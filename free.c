@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 15:40:41 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:55:43 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,11 @@ t_zone 	*browse_zone(t_zone *zone, int block_size)
 	tmp_zone 	= zone;
 	while (tmp_zone)
 	{
-		if (tmp_zone->nbrBlockUsed == 0)
+		if (tmp_zone->nbr_block_used == 0)
 		{
-			del_zone(&zone, i,  block_size, tmp_zone->nbrBlock);
+			del_zone(&zone, i,  block_size, tmp_zone->nbr_block);
 			tmp_zone = zone;
-			if (ft_lstcount(zone) != 0)
+			if (count_len_zone(zone) != 0)
 				browse_zone(tmp_zone, block_size);
 			else
 				return (NULL);
@@ -99,11 +99,11 @@ int 	check_zone(t_zone *zone, void *ptr, int size_block)
 	{
 		i 		= 0;
 		begin 	= tmpZone->addr;
-		while (i++ < tmpZone->nbrBlock)
+		while (i++ < tmpZone->nbr_block)
 		{
 			if (begin + sizeof(int) == ptr)
 			{
-				tmpZone->nbrBlockUsed--;
+				tmpZone->nbr_block_used--;
 				*(int*)begin  = 0;
 				return (1);
 			}

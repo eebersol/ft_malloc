@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 15:40:37 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:55:44 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,14 @@ t_zone 	*create_zone(size_t size)
 	zone 	 			= base->type == TINY ?  (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * sizeTotal)) :
 							base->type == SMALL ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * sizeTotal)) :
 								(t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + size)));
-	zone->nbrBlockUsed 	= 0;
+	zone->nbr_block_used 	= 0;
 	zone->addr 			= &zone[0] + sizeof(t_zone);
-	zone->nbrBlock 		= base->type == LARGE ? 1 : sizeTotal;
+	zone->nbr_block 		= base->type == LARGE ? 1 : sizeTotal;
 	zone->next 			= NULL;
 	zone->type 			= get_type(size);
 	begin 				= zone->addr;
 
-	while (i++ < zone->nbrBlock)
+	while (i++ < zone->nbr_block)
 	{
 		*(int*)begin = 0;
 		begin 			+= (base->type == TINY ? TINY_BLOCK : base->type == SMALL ? SMALL_BLOCK : size) + sizeof(int);
@@ -61,7 +61,7 @@ t_zone 	*create_zone(size_t size)
 }
 
 
-int		ft_lstcount(t_zone *lst)
+int		count_len_zone(t_zone *lst)
 {
 	int			i;
 	t_zone		*elem;

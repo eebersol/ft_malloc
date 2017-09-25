@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 15:40:24 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/21 15:55:44 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,6 @@
 t_zone_type		get_type(size_t size)
 {
 	return (size < TINY_BLOCK ? TINY : size < SMALL_BLOCK ? SMALL : LARGE);
-}
-
-size_t			get_size_type(t_zone_type type)
-{
-	return (type == TINY ? TINY_BLOCK : type == SMALL ? SMALL_BLOCK : 0);
 }
 
 t_zone			*get_zone()
@@ -36,6 +31,11 @@ t_zone			*get_zone()
 		return (base->large);
 	else
 		return (NULL);
+}
+
+size_t			get_size_type(t_zone_type type)
+{
+	return (type == TINY ? TINY_BLOCK : type == SMALL ? SMALL_BLOCK : 0);
 }
 
 size_t			get_size_zone(t_zone_type type, size_t size)
