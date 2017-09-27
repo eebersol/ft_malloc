@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/27 12:20:09 by macbook          ###   ########.fr       */
+/*   Updated: 2017/09/27 15:23:59 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@ void 	*smap(size_t len)
 {
 	size_t  	multiple;
 
-	multiple 	= (len / PAGE_SIZE) + 2; // Add +1 repare segfault LARGE realloc
-	//printf("len : %zu\n", len);
+	//printf("\nSmap :\n");
+	//printf("- mallocLen : %zu -- reallocLen : %lu\n", len, recover_base()->realloc_size + sizeof(int) + sizeof(t_zone));
+	multiple 	= (len / PAGE_SIZE) + 1; // Add +1 repare segfault LARGE realloc
+	//printf("- Nombre de page allouée : %zu\n", multiple);
 	len 		= multiple * PAGE_SIZE;
-	//printf("page allouée : %zu -- len : %zu\n", multiple, len);
+	//printf("- Len final : %zu\n", len);
 	return (mmap(NULL, len, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0));
 }
 

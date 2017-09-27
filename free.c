@@ -121,7 +121,7 @@ void	free(void *ptr)
 {
 	t_base 	*base;
 
-	//printf("WELCOME TO FREE\n");
+	//// printf("WELCOME TO FREE\n");
 	base = recover_base();
 	if (ptr != NULL)
 	{

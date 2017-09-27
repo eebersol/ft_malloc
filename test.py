@@ -22,7 +22,7 @@ def page_reclaims(prog):
     pipe = cmd.Popen(com.split(), stdout=cmd.PIPE, stderr=cmd.PIPE)
     output, errput = pipe.communicate()
     m = re.search('([0-9]+?)[ \t]+page[ \t]+reclaims', errput)
-    print(errput)
+    print("ERROR : " + errput)
     if m:
         found = m.group(1)
         return int(found)

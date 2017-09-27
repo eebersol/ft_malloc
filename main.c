@@ -3,28 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/27 12:23:16 by macbook          ###   ########.fr       */
+/*   Updated: 2017/09/27 15:11:08 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/malloc.h"
 
 // RELLOC large probleme quand la size de large depasse une page : 
 // solution 1 : enmpecher le realloc
 // solution 2 : fragmenter l'informartion
 
-int main (int ac, char **av)
+#include "includes/malloc.h"
+
+#define M (1024 * 1024)
+
+void print(char *s)
 {
+	write(1, s, strlen(s));
+}
+
+int main()
+{
+	char *addr1;
+	char *addr3;
 	int i;
-	char *addr;
 
 	i = 0;
-	while (i < 1024)
-	{
-		i++;
-	}
+	while (i++ < 300)
+		addr1 = malloc(sizeof(char*) * 7);
+	i = 0;
+	while (i++ < 10)
+		addr1 = malloc(sizeof(char*) * 10);
+	i = 0;
+	while (i++ < 10)
+		addr1 = malloc(sizeof(char*) * 30);
+	show_alloc_mem();
 	return (0);
 }
+

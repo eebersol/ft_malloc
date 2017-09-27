@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   malloc.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/26 20:18:22 by macbook          ###   ########.fr       */
+/*   Updated: 2017/09/27 16:47:19 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct				s_zone
 typedef struct				s_base
 {
 	void					*realloc_src;
+	int 					realloc_size;
 	int						realloc_new_zone;
 	int						realloc_flag;
 	int						is_realloc;
@@ -69,6 +70,7 @@ void						*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int
 void						*find_old_alloc(t_base *base, void *ptr, size_t new_size);
 void						*realloc(void *ptr, size_t size);
 // show_alloc_mem.c
+t_zone 						*sort_zone(t_base *base);
 void 						printf_info_zone(void *ptr, int i, t_zone_type type);
 void 						print_info_block(void *ptr, int i, int size);
 int 						print_zone(t_zone *zone, t_zone_type type);
@@ -91,8 +93,12 @@ size_t						get_nbr_block(size_t size);
 void						init_base(void);
 t_base						*recover_base(void);
 // tools_lib.c
+
+void	ft_lstaddend(t_zone **alst, t_zone *new);
 void						ft_putnbr(int n);
 void 						ft_putstr(char *str);
 char						*ft_itohex(void *ptr);
-
+t_zone *sort_list(t_zone *zoneTiny, t_zone *zoneSmall, t_zone *zoneLarge);
+void						ft_lst_bubble_sort(t_zone *node);
+void						ft_lst_swap(t_zone *node1, t_zone *node2);
 #endif

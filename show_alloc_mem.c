@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   show_alloc_mem.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
+/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/26 20:29:27 by macbook          ###   ########.fr       */
+/*   Updated: 2017/09/27 17:09:34 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,14 @@ size_t display_block(t_zone *zone, t_zone_type type)
 	i 					= 0;
 	size_total 			= 0;
 	ptr 				= zone->addr;
-	while (i < zone->nbr_block)
+	while (i++ < zone->nbr_block)
 	{
 		if (*(int*)ptr != 0)
 		{
 			size 		= *(int*)ptr;
 			block 		= type == TINY ? TINY_BLOCK : 
 							type == SMALL ? SMALL_BLOCK : size;
-			// printf("TRUE   [%d] %p - %p : %d octets\n",i, ptr  + sizeof(int), ptr + block + sizeof(int), *(int*)ptr);
+			// // printf("TRUE   [%d] %p - %p : %d octets\n",i, ptr  + sizeof(int), ptr + block + sizeof(int), *(int*)ptr);
 			print_info_block(ptr, i,  size);
 			ptr 		+= sizeof(int);
 			block 		= block == 0 ? size : block;
@@ -64,9 +64,8 @@ size_t display_block(t_zone *zone, t_zone_type type)
 		}
 		else
 			ptr 		+= (sizeof(int)) + block;
-		i++;
 	}
-	//printf("size_total : %d\n", size_total);
+	// printf("size_total : %d\n", size_total);
 	return (size_total);
 }
 
@@ -81,10 +80,10 @@ int	print_zone(t_zone *zone, t_zone_type type)
 	size_total = 0;
 	while (tmp_zone)
 	{
-		//printf("BLOCK : %zu\n", zone->nbr_block);
+		//// printf("BLOCK : %zu\n", zone->nbr_block);
 		printf_info_zone(tmp_zone->addr, i, type);
-		//printf("BLOCK 2 : %zu\n", zone->nbr_block);
-		size_total += display_block(tmp_zone, type);
+		//// printf("BLOCK 2 : %zu\n", zone->nbr_block);
+		// size_total += display_block(tmp_zone, type);
 		if (tmp_zone->next == NULL)
 			break ;
 		tmp_zone = tmp_zone->next;
@@ -92,6 +91,21 @@ int	print_zone(t_zone *zone, t_zone_type type)
 	}
 	return (size_total);
 }
+
+t_zone 	*sort_zone(t_base *base)
+{
+	t_zone *tZone;
+	t_zone *sZone;
+	t_zone *lZone;
+	t_zone *zone;
+
+	tZone = base->tiny;
+	sZone = base->small;
+	lZone = base->large;
+	zone = sort_list(base->tiny, base->small, base->large);
+	return (zone);
+}
+
 void show_alloc_mem()
 {
 	t_base 		*base;
@@ -110,16 +124,22 @@ void show_alloc_mem()
 	printf("Len tiny  : [%d] \n", count_len_zone(base->tiny));
 	printf("Len small : [%d] \n", count_len_zone(base->small));
 	printf("Len large : [%d] \n", count_len_zone(base->large));
-	printf("\n%p\n", zone->addr);
-	if (base)
-	{
-		size_total += print_zone(base->tiny, TINY);
-		size_total += print_zone(base->small, SMALL);
-		size_total += print_zone(base->large, LARGE);
-	}
+
+	zone = sort_zone(base);
+	printf("\nFinal Zone : [%d] \n\n", count_len_zone(zone));
+	printf("Len tiny  : [%d] \n", count_len_zone(base->tiny));
+	printf("Len small : [%d] \n", count_len_zone(base->small));
+	printf("Len large : [%d] \n", count_len_zone(base->large));
+
+	// if (base)
+	// {
+	// 	size_total += print_zone(base->tiny, TINY);
+	// 	size_total += print_zone(base->small, SMALL);
+	// 	size_total += print_zone(base->large, LARGE);
+	// }
 	ft_putstr("\nTotal : ");
 	ft_putnbr(size_total);
 	ft_putstr(" octets\n\n");
-//	printf("\nTotal : %lu octets\n", size_total);
-//	printf("\n-----------------------------------------------------\n");
+//	// printf("\nTotal : %lu octets\n", size_total);
+//	// printf("\n-----------------------------------------------------\n");
 }

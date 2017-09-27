@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/25 14:51:32 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/27 17:17:11 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,130 @@ char	*ft_itohex(void *ptr)
 	}
 	str = &hex[i+1];
 	return(str);
+}
+
+// t_zone *sort_list(t_zone *zoneTiny, t_zone *zoneSmall, t_zone *zoneLarge)
+// {
+// 	t_zone 	*bigZone;
+// 	t_zone 	*tmpZone;
+// 	t_zone 	**test;
+// 	int 	small;
+
+// 	tmpZone = zoneTiny;
+// 	bigZone = tmpZone;
+// 	test = &zoneSmall;
+// 	small = 0;
+// 	while (tmpZone)
+// 	{
+// 		if (tmpZone->next == NULL && small < 2)
+// 		{
+// 			small++;
+// 			if (small == 1)
+// 				tmpZone->next = zoneSmall;
+// 			else
+// 				tmpZone->next = zoneLarge;
+// 		}
+// 		else if (tmpZone->next == NULL)
+// 		{
+// 			break;
+// 		}
+// 		tmpZone = tmpZone->next;	
+// 	}
+// 	zoneSmall = *test;
+// 	return (bigZone);
+// }
+
+t_zone *sort_list(t_zone *zoneTiny, t_zone *zoneSmall, t_zone *zoneLarge)
+{
+	t_zone 	*bigZone;
+	t_zone 	*tmpZone;
+	t_zone 	*test;
+	int 	small;
+
+	test = zoneSmall;
+	tmpZone = zoneTiny;
+	bigZone = tmpZone;
+	small 	= 0;
+	while (tmpZone)
+	{
+		if (tmpZone->next == NULL && small < 2)
+		{
+			small++;
+			if (small == 1)
+				tmpZone->next = zoneSmall;
+			else
+				tmpZone->next = zoneLarge;
+		}
+		else if (tmpZone->next == NULL)
+		{
+			break;
+		}
+		tmpZone = tmpZone->next;	
+	}
+	// while(test)
+	// {
+	// 	if (test->type != LARGE)
+	// 	{
+	// 		test->next = NULL;
+	// 		break;
+	// 	}
+	// 	if (test->next == NULL)
+	// 		break;
+	// }
+	// printf("Test : [%d] \n", count_len_zone(test));
+	return (bigZone);
+}
+
+
+
+
+void	ft_lstaddend(t_zone **alst, t_zone *new)
+{
+	t_zone	*list;
+
+	list = *alst;
+	printf("Begin lastAdd : [%d] \n", count_len_zone(list));
+	if (*alst == NULL && new)
+		*alst = new;
+	else
+	{
+		while (list->next)
+			list = list->next;
+		list->next = new;
+	}
+}
+
+void	ft_lst_bubble_sort(t_zone *node)
+{
+	int			swapped;
+	t_zone		*ptr1;
+	t_zone		*lptr;
+
+	lptr = NULL;
+	swapped = 1;
+	while (swapped)
+	{
+		swapped = 0;
+		ptr1 = node;
+		while (ptr1 && ptr1->next != lptr)
+		{
+			if (ptr1->addr > ptr1->next->addr)
+			{
+				ft_lst_swap(ptr1, ptr1->next);
+				swapped = 1;
+			}
+			ptr1 = ptr1->next;
+		}
+		lptr = ptr1;
+	}
+}
+
+void	ft_lst_swap(t_zone *node1, t_zone *node2)
+{
+	void	*temp;
+
+	printf("SWAP\n");
+	temp = node1;
+	node1 = node2;
+	node2 = temp;
 }

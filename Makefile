@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: macbook <macbook@student.42.fr>            +#+  +:+       +#+         #
+#    By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 14:30:45 by qdequele          #+#    #+#              #
-#    Updated: 2017/09/26 19:50:05 by macbook          ###   ########.fr        #
+#    Updated: 2017/09/27 12:56:24 by eebersol         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,7 @@ $(NAME):  $(OBJ)
 
 %.o : %.c
 	@$(CC) -c $(CFLAGS) $< -I./includes/
-	@printf "\033[32m."
+	@echo  "\033[32m."
 
 clean :
 	@/bin/rm -f $(OBJ)
