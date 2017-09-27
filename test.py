@@ -13,7 +13,7 @@ os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
 bin_folder = "bin/"
 test_files = ["test0.c", "test1.c", "test2.c", "test3.c",
         "test3++.c", "test4.c"]
-lib_inc = "../includes/malloc.h"
+lib_inc = "includes/malloc.h"
 
 #############################################################
 # functions
@@ -55,6 +55,7 @@ for f in test_files:
 
 #############################################################
 # malloc
+print('MALLOC')
 pr0 = page_reclaims("test0")
 pr1 = page_reclaims("test1")
 print("#####Test malloc")

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   malloc.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
+/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/25 13:06:55 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/27 12:25:07 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ void 	*find_place(t_base *base, t_zone *zone, size_t size)
 			addr 			+= sizeof(int);
 			if (base->is_realloc == 1)
 			{
-				// printf("In malloc, copy realloc\n");
-				addr = malloc_memcpy(base->realloc_src, addr, size);
+				//printf("In malloc, copy realloc\n");
+				//printf("info : %p -- %p -- %zu %zu\n", base->realloc_src, addr, size, zone->nbr_block);
+				 addr = malloc_memcpy(addr, base->realloc_src, size);			
 			}
 			zone->nbr_block_used++;
 			break;
@@ -48,13 +49,16 @@ void	*malloc_memcpy(void *dst, const void *src, size_t n)
 	dst_ptr = (unsigned char *)dst;
 	src_ptr = (unsigned char *)src;
 	i = 0;
+	//printf("src : %p -- dst : %p size : %zu\n", src_ptr, dst_ptr, n);
 	while (i < n)
 	{
+		//printf("segfault : %zu\n", i);
 		*dst_ptr = *src_ptr;
 		dst_ptr++;
 		src_ptr++;
 		i++;
 	}
+	//printf("Fin malloc_memcpy\n");
 	recover_base()->is_realloc = 0;
 	return (dst);
 }
@@ -64,7 +68,7 @@ void 	*malloc(size_t size)
 	t_base 			*base;
 	t_zone 			*zone;
 
-	// printf("In malloc : %zu octets.\n", size);
+	//printf("In malloc : %zu octets.\n", size);
 	base 			= recover_base();
 	base->type 		= get_type(size);
 	zone 			= get_zone();

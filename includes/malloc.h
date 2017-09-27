@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   malloc.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
+/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/25 15:52:38 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/26 20:18:22 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,13 @@ void						*modify_base(void *ptr, size_t new_size);
 void						*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int flag);
 void						*find_old_alloc(t_base *base, void *ptr, size_t new_size);
 void						*realloc(void *ptr, size_t size);
-// show_alloc_meme.c
-void						print_zone(t_zone *zone, int jump);
+// show_alloc_mem.c
+void 						printf_info_zone(void *ptr, int i, t_zone_type type);
+void 						print_info_block(void *ptr, int i, int size);
+int 						print_zone(t_zone *zone, t_zone_type type);
 void 						print_info(void *ptr, int i, int jump, int size);
-void						show_alloc_meme(void);
-size_t						display_block(t_zone *zone, int jump);
+void						show_alloc_mem(void);
+size_t 						display_block(t_zone *zone, t_zone_type type);
 int							count_len_zone(t_zone *zone);
 // tools.c
 void						*smap(size_t len);

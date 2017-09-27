@@ -3,21 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
+/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 15:55:44 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/27 12:20:09 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/malloc.h"
+#include "includes/malloc.h"
 
 void 	*smap(size_t len)
 {
 	size_t  	multiple;
 
-	multiple 	= (len / PAGE_SIZE) + 1;
+	multiple 	= (len / PAGE_SIZE) + 2; // Add +1 repare segfault LARGE realloc
+	//printf("len : %zu\n", len);
 	len 		= multiple * PAGE_SIZE;
+	//printf("page allouée : %zu -- len : %zu\n", multiple, len);
 	return (mmap(NULL, len, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0));
 }
 

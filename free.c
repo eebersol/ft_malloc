@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
+/*   By: macbook <macbook@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 15:55:43 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/27 12:21:15 by macbook          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,8 @@ void	free(void *ptr)
 {
 	t_base 	*base;
 
+	//printf("WELCOME TO FREE\n");
 	base = recover_base();
-
 	if (ptr != NULL)
 	{
 		check_zone(base->tiny, ptr, TINY_BLOCK) == 1 ? 0 :
