@@ -6,20 +6,34 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/21 14:27:17 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/28 16:03:05 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/malloc.h"
 
-void 	save_zone(t_base *base, t_zone *zoneList)
+void 	*find_place(t_base *base, t_zone *zone, size_t size)
 {
-	if (base->type == TINY)
-		base->tiny = zoneList;
-	else if (base->type == SMALL)
-		base->small = zoneList;
-	else if (base->type == LARGE)
-		base->large = zoneList;
+	void 	*addr;
+	int 	i;
+
+	i 		= 0;
+	addr 	= zone->addr;
+	while (i++ < zone->nbr_block)
+	{
+		if ((*(int*)addr == 0 && base->is_realloc == 0) || (base->is_realloc == 1  && base->realloc_type == zone->type && *(int*)addr == 0))
+		{
+			*(int*)addr 	= size;
+			addr 			+= sizeof(int);
+			if (base->is_realloc == 1)
+				 addr = malloc_memcpy(addr, base->realloc_src, size - 1);			
+			zone->nbr_block_used++;
+			break;
+		}
+		else
+			addr	+= get_size_type(base->type) + sizeof(int);
+	}
+	return (addr);
 }
 
 void	*malloc_memcpy(void *dst, const void *src, size_t n)
@@ -42,61 +56,32 @@ void	*malloc_memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-
 void 	*malloc(size_t size)
 {
-	t_base 					*base;
-	t_zone 					*zoneList;
-	void 					*addr;
-	int 					i;
+	t_base 			*base;
+	t_zone 			*zone;
 
-	i 						= 0;
-	printf("In malloc : %zu octets.\n", size);
-	base 					= recover_base();
-	base->type 				= size < TINY_BLOCK ? TINY : size < SMALL_BLOCK  ? SMALL : LARGE;
-	zoneList 				= (base->type == TINY ? base->tiny :
-								base->type == SMALL ? base->small : base->large);
-	while (zoneList)
+	base 			= recover_base();
+	base->type 		= get_type(size);
+	zone 			= base->memory;
+	while (zone)
 	{
-		if (zoneList->next == NULL || zoneList->nbrBlockUsed < zoneList->nbrBlock)
+		if (zone->next == NULL || (zone->nbr_block_used < zone->nbr_block && zone->type == base->type))
 			break;
-		zoneList = zoneList->next;
+		zone = zone->next;
 	}
-	if (!zoneList || (zoneList && zoneList->nbrBlockUsed > zoneList->nbrBlock))
+	if (!zone || (zone && (zone->nbr_block_used > zone->nbr_block)))
 	{
-		printf("Création de la première zone.\n");
-		zoneList 			= select_zone();\
-		zoneList 			= create_zone(size);
-		save_zone(base, zoneList);
+		printf("Création d'une zone type %d.\n", base->type);
+		zone 		= create_zone(size);
+		base->memory = zone;
 	}
-	else if (zoneList && zoneList->nbrBlockUsed == zoneList->nbrBlock) 
+	else if ((zone && (zone->nbr_block_used == zone->nbr_block || base->type == LARGE)) 
+		|| (base->is_realloc == 1 && base->type != zone->type)) 
 	{
 		printf("Ajout d'une zone \n");
-		zoneList->next 		= create_zone(size);
-		zoneList  			= zoneList->next;
+		zone->next 	= create_zone(size);
+		zone  		= zone->next;
 	}
-	addr 					= zoneList->addr;
-	while (i++ < zoneList->nbrBlock)
-	{
-		if (*(int*)addr == 0)
-		{
-			*(int*)addr 	= size;
-			addr 			+= sizeof(int);
-			if (recover_base()->is_realloc == 1)
-			{
-				printf("In malloc, copy realloc\n");
-				addr = malloc_memcpy(recover_base()->realloc_src, addr, recover_base()->realloc_size); // acheck
-			}
-			zoneList->nbrBlockUsed++;
-			break;
-		}
-		else
-		{
-
-			addr	+= base->type == TINY ?  (sizeof(int)) + TINY_BLOCK :
-						base->type == SMALL ? (sizeof(int)) + SMALL_BLOCK :
-							(sizeof(int)) + sizeof(LARGE);
-		}
-	}
-	return (addr);
+	return(find_place(base, zone, size));
 }

@@ -6,7 +6,7 @@
 #    By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 14:30:45 by qdequele          #+#    #+#              #
-#    Updated: 2017/09/21 11:43:42 by eebersol         ###   ########.fr        #
+#    Updated: 2017/09/27 12:56:24 by eebersol         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,9 +24,12 @@ NAME 	:= libft_malloc_$(HOSTTYPE)
 SRC 	:=  malloc.c \
 			init_struct.c \
 			tools.c \
+			tools_get.c \
+			tools_lib.c \
 			show_alloc_mem.c \
 			free.c \
-			realloc_true.c
+			utils_lib.c \
+			realloc.c
 
 OBJ 	:= $(SRC:.c=.o)
 
@@ -38,12 +41,12 @@ $(NAME):  $(OBJ)
 	@$(CC) -shared -o $(NAME) $(OBJ)
 	@ln -s $(NAME) libft_malloc.so
 	@echo "$(NAME) compiled\033[0m"
-	@gcc main.c $(NAME)
+	@ gcc main.c $(NAME)
 	@./a.out
 
 %.o : %.c
 	@$(CC) -c $(CFLAGS) $< -I./includes/
-	@printf "\033[32m."
+	@echo  "\033[32m."
 
 clean :
 	@/bin/rm -f $(OBJ)
