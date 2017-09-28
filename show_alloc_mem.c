@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/28 16:06:30 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/28 16:14:22 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ size_t display_block(t_zone *zone)
 			block 		= zone->type == TINY ? TINY_BLOCK : 
 							zone->type == SMALL ? SMALL_BLOCK : *(int*)ptr;
 			print_info_block(ptr, i,  *(int*)ptr);
+			size_total 	+= *(int*)ptr;
 			ptr 		+= sizeof(int);
 			block 		= block == 0 ? *(int*)ptr : block;
 			ptr 		+= block;
-			size_total 	+= *(int*)ptr;
 		}
 		else
 			ptr 		+= (sizeof(int)) + block;

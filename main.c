@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/28 15:24:09 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/28 16:15:10 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,29 +54,42 @@
 // 	return (0);
 // }
 
-int    main(void)
-{
-    int        err;
-    char    *str;
-    int        i;
+// int    main(void)
+// {
+//     int        err;
+//     char    *str;
+//     int        i;
     
-    err = 0;
-    i = 290;
-    while (i < 310)
-    {
-        printf("-------NUMBER : %d", i);
-        str = (char*)malloc(i);
-        str[0] = 42;
-        show_alloc_mem();
-        free(str);
-        show_alloc_mem();
-        str = (char*)malloc(i);
-        str[0] = 42;
-        show_alloc_mem();
-        i++;
-    }
-    // show_alloc_mem();
-    printf("\t 1) ok\n");
-    return err;
-}
+//     err = 0;
+//     i = 290;
+//     while (i < 310)
+//     {
+//         printf("-------NUMBER : %d", i);
+//         str = (char*)malloc(i);
+//         str[0] = 42;
+//         show_alloc_mem();
+//         free(str);
+//         show_alloc_mem();
+//         str = (char*)malloc(i);
+//         str[0] = 42;
+//         show_alloc_mem();
+//         i++;
+//     }
+//     // show_alloc_mem();
+//     printf("\t 1) ok\n");
+//     return err;
+// }
 
+int main(void)
+{
+	char 	*str;
+	int 	i;
+
+	i = 0;
+	while (i++ < 10)
+	{
+		str = malloc(sizeof(char*) * 312);
+	}
+	realloc(str, sizeof(char*) * 3000);
+	show_alloc_mem();
+}

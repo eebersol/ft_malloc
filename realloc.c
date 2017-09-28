@@ -6,7 +6,7 @@
 /*   By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 14:20:05 by eebersol          #+#    #+#             */
-/*   Updated: 2017/09/28 15:06:16 by eebersol         ###   ########.fr       */
+/*   Updated: 2017/09/28 16:22:50 by eebersol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,16 @@ void			*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int fl
 		ptr = zone->addr;
 		while (i++ < zone->nbr_block)
 		{	
-			printf("FLAG : %d\n",flag );
 			if (ptr + sizeof(int) == old_ptr)
 			{
 				limit = 0;
 				if (new_size < *(int*)ptr && new_size > SMALL_BLOCK)
 				{
-					printf("no nedd malloc\n");
 					*(int*)ptr = new_size;
 					return (ptr + sizeof(int));
 				}
 				else
-				{
-					printf("need malloc -- realloc_type %d\n", recover_base()->realloc_type);
 					return (modify_base(ptr, new_size));
-				}
 			}
 			if (ptr + sizeof(int) == old_ptr && flag == 0)
 			{
@@ -68,7 +63,6 @@ void			*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int fl
 			break;
 		zone = zone->next;
 	}
-	printf("Not found\n");
 	return (NULL);
 }
 

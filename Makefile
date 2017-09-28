@@ -6,7 +6,7 @@
 #    By: eebersol <eebersol@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 14:30:45 by qdequele          #+#    #+#              #
-#    Updated: 2017/09/27 12:56:24 by eebersol         ###   ########.fr        #
+#    Updated: 2017/09/28 16:13:10 by eebersol         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,6 @@ SRC 	:=  malloc.c \
 			tools_lib.c \
 			show_alloc_mem.c \
 			free.c \
-			utils_lib.c \
 			realloc.c
 
 OBJ 	:= $(SRC:.c=.o)
