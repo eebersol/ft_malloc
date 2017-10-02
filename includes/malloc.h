@@ -18,8 +18,10 @@
 # include <sys/mman.h>
 # include <string.h>
 
-# define TINY_BLOCK 90
-# define SMALL_BLOCK 300
+# define TINY_BLOCK 800
+# define SMALL_BLOCK 1200
+# define FLAG_PROT PROT_WRITE | PROT_READ
+#define FLAG_MAP MAP_ANON | MAP_PRIVATE
 # define PAGE_SIZE sysconf(_SC_PAGESIZE)
 
 typedef enum				e_zone_type
@@ -82,6 +84,7 @@ size_t 						display_block(t_zone *zone);
 int							count_len_zone(t_zone *zone);
 // tools.c
 void						*smap(size_t len);
+t_zone 						*fix_zone_size(size_t size_total, size_t size);
 t_zone						*create_zone(size_t size);
 int							count_len_zone(t_zone *zone);
 // tools_get.c
@@ -94,7 +97,6 @@ size_t						get_nbr_block(size_t size);
 void						init_base(void);
 t_base						*recover_base(void);
 // tools_lib.c
-
 void	ft_lstaddend(t_zone **alst, t_zone *new);
 void						ft_putnbr(int n);
 void 						ft_putstr(char *str);

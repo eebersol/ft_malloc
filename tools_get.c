@@ -12,37 +12,55 @@
 
 #include "includes/malloc.h"
 
-
-t_zone_type		get_type(size_t size)
+t_zone_type	get_type(size_t size)
 {
-	return (size < TINY_BLOCK ? TINY : size < SMALL_BLOCK ? SMALL : LARGE);
+	if (size < TINY_BLOCK)
+		return (TINY);
+	else if (size < SMALL_BLOCK)
+		return (SMALL);
+	else
+		return (LARGE);
 }
 
-size_t			get_size_type(t_zone_type type)
+size_t		get_size_type(t_zone_type type)
 {
-	return (type == TINY ? TINY_BLOCK : type == SMALL ? SMALL_BLOCK : 0);
+	if (type == TINY)
+		return (TINY_BLOCK);
+	else if (type == SMALL)
+		return (SMALL_BLOCK);
+	else
+	{
+		return (0);
+	}
 }
 
-size_t			get_size_zone(t_zone_type type, size_t size)
+size_t		get_size_zone(t_zone_type type, size_t size)
 {
-	return (type == TINY ?  (sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100) :
-				type == SMALL ? (sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * 100) :
-					(sizeof(t_zone)) + ((sizeof(int) + size)));
+	if (type == TINY)
+		return ((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * 100));
+	else if (type == SMALL)
+		return ((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * 100));
+	else
+		return ((sizeof(t_zone)) + ((sizeof(int) + size)));
 }
 
-size_t			get_nbr_block(size_t size)
+size_t		get_nbr_block(size_t size)
 {
-	t_base			*base;
-	int 			nbr_block;
-	int 			total_size;
+	t_base	*base;
+	int		nbr_block;
+	int		total_size;
 
-
-	base 			= recover_base();
-	total_size 		= 0;
-	nbr_block 		= get_size_zone(base->type, size);
+	base = recover_base();
+	total_size = 0;
+	nbr_block = get_size_zone(base->type, size);
 	while (total_size * PAGE_SIZE < nbr_block)
 		total_size++;
-	total_size 		*= PAGE_SIZE;
-	nbr_block 		= base->type == TINY ?  total_size/TINY_BLOCK : base->type == SMALL ? total_size/SMALL_BLOCK :  total_size/LARGE;
+	total_size *= PAGE_SIZE;
+	if (base->type == TINY)
+		nbr_block = total_size / TINY_BLOCK;
+	else if (base->type == SMALL)
+		nbr_block = total_size / SMALL_BLOCK;
+	else
+		nbr_block = 1;
 	return (nbr_block);
 }

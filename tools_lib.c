@@ -39,7 +39,7 @@ void	ft_putnbr(int n)
 	}
 }
 
-void 	ft_putstr(char *str)
+void	ft_putstr(char *str)
 {
 	int i;
 
@@ -51,13 +51,12 @@ void 	ft_putstr(char *str)
 	}
 }
 
-
 char	*ft_itohex(void *ptr)
 {
 	unsigned long long	address;
 	char				*base;
 	char				hex[50];
-	char 				*str;
+	char				*str;
 	int					i;
 
 	base = "0123456789abcdef";
@@ -69,15 +68,15 @@ char	*ft_itohex(void *ptr)
 		address = address / 16;
 		i--;
 	}
-	str = &hex[i+1];
-	return(str);
+	str = &hex[i + 1];
+	return (str);
 }
 
 void	ft_lst_bubble_sort(t_zone *node)
 {
-	int			swapped;
-	t_zone		*ptr1;
-	t_zone		*lptr;
+	int		swapped;
+	t_zone	*ptr1;
+	t_zone	*lptr;
 
 	lptr = NULL;
 	swapped = 1;

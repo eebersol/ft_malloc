@@ -10,98 +10,98 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "includes/malloc.h"
 
-void printf_info_zone(void *ptr, int i, t_zone_type type)
+void	printf_info_zone(void *ptr, int i, t_zone_type type)
 {
 	ft_putstr("\n- n°");
 	ft_putnbr(i);
-	type == TINY ? ft_putstr(" TINY : ") :
-		type == SMALL ? ft_putstr(" SMALL : ") : ft_putstr(" LARGE : ");
-	ft_putstr(ft_itohex(ptr));
-	ft_putstr("-\n\n");
-
+	if (type == TINY)
+		ft_putstr(" TINY : ");
+	else if (type == SMALL)
+		ft_putstr(" SMALL : ");
+	else
+		ft_putstr(" LARGE : ");
+	ft_putnbr((int)ptr);
+	ft_putstr("\n");
+	// ft_putstr(ft_itohex(ptr));
 }
 
-void print_info_block(void *ptr, int i, int size)
+void	print_info_block(void *ptr, int i, int size)
 {
 	ft_putstr("[");
 	ft_putnbr(i);
-	ft_putstr("] 0x");
-	ft_putstr(ft_itohex(ptr + sizeof(int)));
-	ft_putstr("- 0x");
-	ft_putstr(ft_itohex(ptr + size + sizeof(int)));
+	//ft_putstr("] 0x");
+	ft_putstr("] ");
+	ft_putnbr((int)(ptr + sizeof(int)));
+	//ft_putstr(ft_itohex(ptr + sizeof(int)));
+	//ft_putstr("- 0x");
+	ft_putstr(" - ");
+		ft_putnbr((int)(ptr + sizeof(int) + size));
+	//ft_putstr(ft_itohex(ptr + size + sizeof(int)));
 	ft_putstr(": ");
 	ft_putnbr(size);
 	ft_putstr(" octets\n");
 }
 
-size_t display_block(t_zone *zone)
+size_t	display_block(t_zone *zone)
 {
-	void 				*ptr;
-	int 				size_total;
-	int 				block;
-	int 				i;
+	void	*ptr;
+	int		size_total;
+	int		i;
 
-	size_total 			= 0;
-	ptr 				= zone->addr;
-	i 					= 0;
-	while (i++ < zone->nbr_block)
+	size_total = 0;
+	ptr = zone->addr;
+	i = 0;
+	while (i < (int)zone->nbr_block_used)
 	{
 		if (*(int*)ptr != 0)
 		{
-			block 		= zone->type == TINY ? TINY_BLOCK : 
-							zone->type == SMALL ? SMALL_BLOCK : *(int*)ptr;
-			print_info_block(ptr, i,  *(int*)ptr);
-			size_total 	+= *(int*)ptr;
-			ptr 		+= sizeof(int);
-			block 		= block == 0 ? *(int*)ptr : block;
-			ptr 		+= block;
+			print_info_block(ptr, i, *(int*)ptr);
+			size_total += *(int*)ptr;
 		}
-		else
-			ptr 		+= (sizeof(int)) + block;
+		ptr += (sizeof(int)) + get_size_type(zone->type);
+		i++;
 	}
 	return (size_total);
 }
 
-int	print_zone(t_zone *zone)
+int		print_zone(t_zone *zone)
 {
-	t_zone 	*tmp_zone;
-	int 	size_total;
-	int 	i;
+	t_zone	*tmp_zone;
+	int		size_total;
+	int		i;
 
 	i = 0;
 	tmp_zone = zone;
 	size_total = 0;
-	while (tmp_zone && tmp_zone->next != NULL)
+	while (tmp_zone)
 	{
 		printf_info_zone(tmp_zone->addr, i, tmp_zone->type);
 		size_total += display_block(tmp_zone);
+		if (tmp_zone->next == NULL)
+			break ;
 		tmp_zone = tmp_zone->next;
 		i++;
 	}
 	return (size_total);
 }
 
-
-void show_alloc_mem()
+void	show_alloc_mem(void)
 {
-	t_base 		*base;
-	t_zone 		*zone;
-	size_t 		size_total;
+	t_base	*base;
+	t_zone	*zone;
+	size_t	size_total;
 
-	zone 		= NULL;
-	base 		= recover_base();
-	size_total 	= 0;
-	printf("\n-----------------------------------------------------\n\n");
-	printf("Show_alloc_meme : \n\n Len memory  : [%d] \n", count_len_zone(base->memory));
+	zone = NULL;
+	base = recover_base();
+	size_total = 0;
 	if (base->memory)
 	{
 		ft_lst_bubble_sort(base->memory);
 		size_total += print_zone(base->memory);
 	}
 	ft_putstr("\nTotal : ");
-	ft_putnbr(size_total);
+	ft_putnbr((int)size_total);
 	ft_putstr(" octets\n\n");
 }

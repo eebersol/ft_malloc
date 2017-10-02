@@ -12,54 +12,76 @@
 
 #include "includes/malloc.h"
 
-void 	*smap(size_t len)
+void	*smap(size_t len)
 {
-	size_t  	multiple;
+	size_t	multiple;
 
-	multiple 	= (len / PAGE_SIZE) + 1;
-	len 		= multiple * PAGE_SIZE;
-	return (mmap(NULL, len, PROT_WRITE | PROT_READ, MAP_ANON | MAP_PRIVATE, -1, 0));
+	multiple = (len / PAGE_SIZE) + 1;
+	len = multiple * PAGE_SIZE;
+	return (mmap(NULL, len, FLAG_PROT, FLAG_MAP, -1, 0));
 }
 
-
-
-t_zone 	*create_zone(size_t size)
+t_zone	*fix_zone_size(size_t size_total, size_t size)
 {
-	t_zone 					*zone;
-	t_base 					*base;
-	size_t 					sizeTotal;
-	void 					*begin;
-	int 					i;
+	t_zone_type type;
+	size_t test;
 
-	i 						= 0;
-	sizeTotal 				= get_nbr_block(size);
-	base 					= recover_base();	
-	zone 	 				= base->type == TINY ?  (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * sizeTotal)) :
-							base->type == SMALL ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * sizeTotal)) :
-								(t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + size)));
-	zone->nbr_block_used 	= 0;
-	zone->addr 				= &zone[0] + sizeof(t_zone);
-	zone->nbr_block 		= base->type == LARGE ? 1 : sizeTotal;
-	zone->next 				= NULL;
-	zone->type 				= get_type(size);
-	begin 					= zone->addr;
+	type = get_type(size);
+	test = 0;
 
-	while (i++ < zone->nbr_block)
+	if (type == TINY)
 	{
-		*(int*)begin 		= 0;
-		begin 				+= (base->type == TINY ? TINY_BLOCK : base->type == SMALL ? SMALL_BLOCK : size) + sizeof(int);
+
+		return ((t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * size_total)));
+	}
+	else if (type == SMALL)
+		return ((t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * size_total)));
+	else
+		return ((t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + size))));
+
+
+
+	// zone = get_type(size) == TINY ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * size_total)) : 0;
+	// zone = get_type(size) == SMALL ? (t_zone *)smap((sizeof(t_zone))
+	// 						+ ((sizeof(int) + SMALL_BLOCK) * size_total)) :
+	// 								(t_zone *)smap((sizeof(t_zone))
+	// // 									+ ((sizeof(int) + size)));
+	// return (zone);
+}
+
+t_zone	*create_zone(size_t size)
+{
+	t_zone	*zone;
+	t_base	*base;
+	size_t	size_total;
+	void	*begin;
+	int		i;
+
+	i = 0;	
+	size_total = get_nbr_block(size);
+	base = recover_base();
+	zone = fix_zone_size(size_total, size);
+	zone->type = get_type(size);
+	zone->nbr_block_used = 0;
+	zone->addr = &zone[0] + sizeof(t_zone);
+	zone->nbr_block = zone->type == LARGE ? 1 : size_total;
+	zone->next = NULL;
+	begin = zone->addr;
+	while (i++ < (int)zone->nbr_block)
+	{
+		*(int*)begin = 0;
+		begin += get_size_type(zone->type) + sizeof(int);
 	}
 	return (zone);
 }
 
-
 int		count_len_zone(t_zone *lst)
 {
-	int			i;
-	t_zone		*elem;
+	int		i;
+	t_zone	*elem;
 
-	i 			= 0;
-	elem 		= lst;
+	i = 0;
+	elem = lst;
 	if (elem)
 	{
 		while (elem)

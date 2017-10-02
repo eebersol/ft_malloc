@@ -12,18 +12,15 @@
 
 #include "includes/malloc.h"
 
-
 void	del_zone(t_zone **zone, int at, int block_size, int nbr_block)
 {
-	t_zone 	*tmp;
-	t_zone 	*prev;
+	t_zone	*tmp;
+	t_zone	*prev;
 	int		count;
 
-	if (!zone || !(*zone))
-		return ;
-	tmp 	= *zone;
-	prev 	= NULL;
-	count	= 0;
+	tmp = *zone;
+	prev = NULL;
+	count = 0;
 	while (count != at && tmp->next != NULL)
 	{
 		prev = tmp;
@@ -36,26 +33,27 @@ void	del_zone(t_zone **zone, int at, int block_size, int nbr_block)
 			prev->next = tmp->next;
 		else
 			*zone = tmp->next;
-		block_size = block_size == 0 ? *(int*)(&zone[0] + sizeof(t_zone)) : block_size;
-		munmap(&zone,  (sizeof(t_zone)) + ((sizeof(int) + block_size) * nbr_block));
+		block_size = block_size == 0 ?
+			*(int*)(&zone[0] + sizeof(t_zone)) : block_size;
+		munmap(&zone,
+			(sizeof(t_zone)) + ((sizeof(int) + block_size) * nbr_block));
 	}
 }
 
-
-t_zone 	*browse_zone(t_zone *zone)
+t_zone	*browse_zone(t_zone *zone)
 {
-	t_zone 		*tmp_zone;
-	int 		i;
-	int 		block_size;
+	t_zone	*tmp_zone;
+	int		i;
+	int		block_size;
 
-	i 			= 0;
-	tmp_zone 	= zone;
+	i = 0;
+	tmp_zone = zone;
 	while (tmp_zone)
 	{
 		block_size = get_size_type(tmp_zone->type);
 		if (tmp_zone->nbr_block_used == 0)
 		{
-			del_zone(&zone, i,  block_size, tmp_zone->nbr_block);
+			del_zone(&zone, i, block_size, tmp_zone->nbr_block);
 			tmp_zone = zone;
 			if (count_len_zone(zone) != 0)
 				browse_zone(tmp_zone);
@@ -64,63 +62,57 @@ t_zone 	*browse_zone(t_zone *zone)
 			i = 0;
 		}
 		if (tmp_zone->next == NULL)
-			break;
+			break ;
 		tmp_zone = tmp_zone->next;
 		i++;
 	}
 	return (zone);
 }
 
-void 	verify_zone(t_base *base)
+void	verify_zone(t_base *base)
 {
-	t_zone 		*memory_tmp;
+	t_zone	*memory_tmp;
 
-
-	memory_tmp 	= base->memory;
-
-
+	memory_tmp = base->memory;
 	if (memory_tmp)
-		base->memory 	= browse_zone(memory_tmp);
+		base->memory = browse_zone(memory_tmp);
 }
 
-int 	check_zone(t_zone *zone, void *ptr)
+int		check_zone(t_zone *zone, void *ptr)
 {
-	t_zone 		*tmpZone;
-	void 		*begin;
-	int 		i;
-	int 		block_size;
+	t_zone	*tmp_zone;
+	void	*begin;
+	int		i;
+	int		block_size;
 
-	tmpZone 	= zone;
-	begin 		= tmpZone->addr;
-	while (tmpZone)
+	tmp_zone = zone;
+	begin = tmp_zone->addr;
+	while (tmp_zone && tmp_zone->next != NULL)
 	{
-		i 		= 0;
-		block_size = get_size_type(tmpZone->type);
-		begin 	= tmpZone->addr;
-		while (i++ < tmpZone->nbr_block)
+		i = 0;
+		block_size = get_size_type(tmp_zone->type);
+		begin = tmp_zone->addr;
+		while (i++ < (int)tmp_zone->nbr_block)
 		{
 			if (begin + sizeof(int) == ptr)
 			{
-				tmpZone->nbr_block_used--;
-				*(int*)begin  = 0;
+				tmp_zone->nbr_block_used--;
+				*(int*)begin = 0;
 				return (1);
 			}
 			begin += block_size + sizeof(int);
 		}
-		if (tmpZone->next == NULL)
-			break;
-		tmpZone = tmpZone->next;
+		tmp_zone = tmp_zone->next;
 	}
-	// zone = tmpZone; Norme vérifier que ce soit useless
 	return (0);
 }
 
 void	free(void *ptr)
 {
-	t_base 	*base;
+	t_base	*base;
 
-	//// printf("WELCOME TO FREE\n");
 	base = recover_base();
+	ft_putstr("BEGIN FREE\n");
 	if (ptr != NULL)
 	{
 		check_zone(base->memory, ptr);

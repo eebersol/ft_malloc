@@ -12,14 +12,14 @@
 
 
 ifeq ($(HOSTTYPE),)
-	HOSTTYPE := $(shell uname -m)_$(shell uname -s).so
+	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
 CFLAGS 	:= -fPIC -O3 -g -Wall -Werror
 
 CC 		:= gcc
 
-NAME 	:= libft_malloc_$(HOSTTYPE)
+NAME 	:= libft_malloc_$(HOSTTYPE).so
 
 SRC 	:=  malloc.c \
 			init_struct.c \
@@ -40,8 +40,7 @@ $(NAME):  $(OBJ)
 	@$(CC) -shared -o $(NAME) $(OBJ)
 	@ln -s $(NAME) libft_malloc.so
 	@echo "$(NAME) compiled\033[0m"
-	@ gcc main.c $(NAME)
-	@./a.out
+
 
 %.o : %.c
 	@$(CC) -c $(CFLAGS) $< -I./includes/

@@ -12,35 +12,34 @@
 
 #include "includes/malloc.h"
 
-void			*modify_base(void *ptr, size_t new_size)
+void	*modify_base(void *ptr, size_t new_size)
 {
-	t_base 				*base;
+	t_base	*base;
 
-	base 					= recover_base();
-	base->type 				= base->realloc_type; 
-	base->realloc_src 		= ptr + sizeof(int);
-	base->realloc_new_zone 	= 1; // Add
-	base->is_realloc 		= 1;
-	free(ptr+sizeof(int));
-	return(malloc(new_size));
+	base = recover_base();
+	base->type = base->realloc_type;
+	base->realloc_src = ptr + sizeof(int);
+	base->realloc_new_zone = 1;
+	base->is_realloc = 1;
+	free(ptr + sizeof(int));
+	return (malloc(new_size));
 }
 
-void			*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int flag)
+void	*browse_zone_realloc(t_zone *zone, void *old_ptr,
+												size_t new_size, int flag)
 {
-	void 		*ptr;
-	int 		i;
-	int 		limit;
+	void	*ptr;
+	int		i;
 
 	while (zone)
 	{
 		i = 0;
 		ptr = zone->addr;
-		while (i++ < zone->nbr_block)
-		{	
+		while (i++ < (int)zone->nbr_block)
+		{
 			if (ptr + sizeof(int) == old_ptr)
 			{
-				limit = 0;
-				if (new_size < *(int*)ptr && new_size > SMALL_BLOCK)
+				if ((int)new_size < *(int*)ptr && new_size > SMALL_BLOCK)
 				{
 					*(int*)ptr = new_size;
 					return (ptr + sizeof(int));
@@ -53,50 +52,56 @@ void			*browse_zone_realloc(t_zone *zone, void *old_ptr, size_t new_size, int fl
 				*(int*)ptr = new_size;
 				return (ptr + sizeof(int));
 			}
-			else if  (ptr + sizeof(int) == old_ptr && flag != 1)
-			{
+			else if (ptr + sizeof(int) == old_ptr && flag != 1)
 				return (modify_base(ptr, new_size));
-			}
 			ptr += get_size_type(zone->type) + sizeof(int);
 		}
 		if (zone->next == NULL)
-			break;
+			break ;
 		zone = zone->next;
 	}
 	return (NULL);
 }
 
-void			*find_old_alloc(t_base *base, void *ptr, size_t new_size)
+void	*find_old_alloc(t_base *base, void *ptr, size_t new_size)
 {
-	t_zone 	*tmp_zone;
-	void 	*old_ptr;
-	int 	flag;
+	t_zone	*tmp_zone;
+	void	*old_ptr;
+	int		flag;
 
-	flag 	= 0;
+	flag = 0;
 	old_ptr = NULL;
 	if (base->memory && count_len_zone(base->memory) != 0)
 	{
-		flag 		= base->realloc_type == TINY ? 0 : base->realloc_type == SMALL ? 1 : 2;
-		tmp_zone 	= base->memory;
-		old_ptr 	= browse_zone_realloc(tmp_zone, ptr, new_size, flag);
+		if (base->realloc_type == SMALL)
+			flag = 1;
+		else if (base->realloc_type == LARGE)
+			flag = 2;
+		tmp_zone = base->memory;
+		old_ptr = browse_zone_realloc(tmp_zone, ptr, new_size, flag);
 		if (base->realloc_new_zone == 1)
 			return (old_ptr);
 	}
 	return (old_ptr);
 }
 
-void			*realloc(void *ptr, size_t size)
+void	*realloc(void *ptr, size_t size)
 {
-	t_base 				*base;
-	void 				*old_addr;
+	t_base	*base;
+	void	*old_addr;
 
-
-	printf("In realloc :  %zu octets. %p\n", size, ptr);
-	if (size == 0 || !ptr)
-		return (NULL);
-	base 				= recover_base();
-	base->realloc_size 	= size;
-	base->realloc_type 	= get_type(size);
-	old_addr 			= find_old_alloc(base, ptr, size);
+	ft_putstr("BEGIN realloc \n");
+	ft_putnbr((int)ptr);
+	ft_putstr("\n Size : ");
+	ft_putnbr(size);
+	ft_putstr("\n");
+	if (size != 0 || !ptr)
+	{
+		return (malloc(size));
+	}
+	base = recover_base();
+	base->realloc_size = size;
+	base->realloc_type = get_type(size);
+	old_addr = find_old_alloc(base, ptr, size);
 	return (old_addr);
 }
