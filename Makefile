@@ -40,7 +40,8 @@ $(NAME):  $(OBJ)
 	@$(CC) -shared -o $(NAME) $(OBJ)
 	@ln -s $(NAME) libft_malloc.so
 	@echo "$(NAME) compiled\033[0m"
-
+	@gcc main.c $(NAME)
+	@./a.out
 
 %.o : %.c
 	@$(CC) -c $(CFLAGS) $< -I./includes/

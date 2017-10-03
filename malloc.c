@@ -26,30 +26,17 @@ void	*find_place(t_base *base, t_zone *zone, size_t size)
 				&& *(int*)addr == 0))
 		{
 			*(int*)addr = (int)size;
-			addr = addr + sizeof(int);
+			addr += sizeof(int);
 			if (base->is_realloc == 1)
 			{
-	//			ft_putstr("Error");
 				addr = malloc_memcpy(addr, base->realloc_src, size);
 			}
 			zone->nbr_block_used++;
-//			show_alloc_mem();
-			ft_putstr("Address returned : ");
-			ft_putnbr((int)addr);
-			ft_putstr("\n nbr block : ");
-			ft_putnbr((int)zone->nbr_block_used);
-			ft_putstr(" / ");
-			ft_putnbr((int)zone->nbr_block);
-			ft_putstr("\n");
-			show_alloc_mem();
 			return (addr);
 		}
 		else
-		{
 			addr += get_size_type(zone->type) + sizeof(int);
-		}
 	}
-//	ft_putstr("ICI");
 	return (addr);
 }
 
@@ -75,20 +62,9 @@ void	*malloc_memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-void	*malloc(size_t size)
+t_zone	*get_last_zone(t_zone *zone, t_base *base, size_t size)
 {
-	t_base	*base;
-	t_zone	*zone;
-
-	//ft_putstr("BEGIN \n");
-	if (size == 0)
-		return (NULL);
-	base = recover_base();
 	base->type = get_type(size);
-	zone = base->memory;
-//	ft_putstr("Size : ");
-//	ft_putnbr(size);
-//	ft_putstr("\n");
 	while (zone)
 	{
 		if (zone->next == NULL || (zone->nbr_block_used < zone->nbr_block
@@ -96,9 +72,21 @@ void	*malloc(size_t size)
 			break ;
 		zone = zone->next;
 	}
+	return (zone);
+}
+
+void	*malloc(size_t size)
+{
+	t_base	*base;
+	t_zone	*zone;
+
+	if (size == 0)
+		return (NULL);
+	base = recover_base();
+	zone = base->memory;
+	zone = get_last_zone(zone, base, size);
 	if (!zone || (zone && (zone->nbr_block_used > zone->nbr_block)))
 	{
-		ft_putstr("Create zone\n");
 		zone = create_zone(size);
 		base->memory = zone;
 	}
@@ -106,7 +94,6 @@ void	*malloc(size_t size)
 		|| get_type(size) != zone->type)) || (base->is_realloc == 1
 			&& base->type != zone->type))
 	{
-//		ft_putstr("Add zone\n");
 		zone->next = create_zone(size);
 		zone = zone->next;
 	}

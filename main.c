@@ -220,6 +220,17 @@ int 	test_malloc(void)
 	return (0);
 }
 
+void simple_test(void)
+{
+	char *str;
+	char *str2;
+
+	str = (char*)malloc(sizeof(char*) * 12);
+	str2 = (char*)malloc(sizeof(char*) * 120000);
+	str2 = realloc(str2, sizeof(char*)*55);
+	show_alloc_mem();
+}
+
 int main(void)
 {
 	char 	*str;
@@ -229,7 +240,7 @@ int main(void)
 	// test_malloc();
 	// test_free();
 	// test_realloc();
-	// printf("Test github : \n");
+	printf("Test github : \n");
 	// test_1();
 	// test_2();
 	// test_3();
@@ -238,6 +249,7 @@ int main(void)
 	// test_5();
 	// test_6();
 	printf("All OK \n");
+	simple_test();
 
 	return (0);
 }

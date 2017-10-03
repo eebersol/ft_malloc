@@ -78,7 +78,7 @@ void	verify_zone(t_base *base)
 		base->memory = browse_zone(memory_tmp);
 }
 
-int		check_zone(t_zone *zone, void *ptr)
+void	check_zone(t_zone *zone, void *ptr)
 {
 	t_zone	*tmp_zone;
 	void	*begin;
@@ -87,7 +87,7 @@ int		check_zone(t_zone *zone, void *ptr)
 
 	tmp_zone = zone;
 	begin = tmp_zone->addr;
-	while (tmp_zone && tmp_zone->next != NULL)
+	while (tmp_zone)
 	{
 		i = 0;
 		block_size = get_size_type(tmp_zone->type);
@@ -98,13 +98,13 @@ int		check_zone(t_zone *zone, void *ptr)
 			{
 				tmp_zone->nbr_block_used--;
 				*(int*)begin = 0;
-				return (1);
 			}
 			begin += block_size + sizeof(int);
 		}
+		if (tmp_zone->next == NULL)
+			break ;
 		tmp_zone = tmp_zone->next;
 	}
-	return (0);
 }
 
 void	free(void *ptr)
@@ -112,7 +112,6 @@ void	free(void *ptr)
 	t_base	*base;
 
 	base = recover_base();
-	ft_putstr("BEGIN FREE\n");
 	if (ptr != NULL)
 	{
 		check_zone(base->memory, ptr);

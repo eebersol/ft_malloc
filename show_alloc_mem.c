@@ -14,34 +14,29 @@
 
 void	printf_info_zone(void *ptr, int i, t_zone_type type)
 {
-	ft_putstr("\n- n°");
-	ft_putnbr(i);
 	if (type == TINY)
-		ft_putstr(" TINY : ");
+		ft_putstr("TINY : ");
 	else if (type == SMALL)
-		ft_putstr(" SMALL : ");
+		ft_putstr("SMALL : ");
 	else
-		ft_putstr(" LARGE : ");
-	ft_putnbr((int)ptr);
+		ft_putstr("LARGE : ");
+	ft_putstr("0x");
+	ft_putstr(ft_itohex(ptr));
 	ft_putstr("\n");
-	// ft_putstr(ft_itohex(ptr));
 }
 
 void	print_info_block(void *ptr, int i, int size)
 {
-	ft_putstr("[");
-	ft_putnbr(i);
-	//ft_putstr("] 0x");
-	ft_putstr("] ");
-	ft_putnbr((int)(ptr + sizeof(int)));
-	//ft_putstr(ft_itohex(ptr + sizeof(int)));
-	//ft_putstr("- 0x");
-	ft_putstr(" - ");
-		ft_putnbr((int)(ptr + sizeof(int) + size));
-	//ft_putstr(ft_itohex(ptr + size + sizeof(int)));
+	ft_putstr("0x");
+	ft_putstr(ft_itohex(ptr + sizeof(int)));
+	ft_putstr("- 0x");
+	ft_putstr(ft_itohex(ptr + size + sizeof(int)));
 	ft_putstr(": ");
 	ft_putnbr(size);
-	ft_putstr(" octets\n");
+	if (size < 1)
+		ft_putstr(" octet\n");
+	else
+		ft_putstr(" octets\n");
 }
 
 size_t	display_block(t_zone *zone)
@@ -101,7 +96,10 @@ void	show_alloc_mem(void)
 		ft_lst_bubble_sort(base->memory);
 		size_total += print_zone(base->memory);
 	}
-	ft_putstr("\nTotal : ");
+	ft_putstr("Total : ");
 	ft_putnbr((int)size_total);
-	ft_putstr(" octets\n\n");
+	if (size_total < 1)
+		ft_putstr(" octet\n");
+	else
+		ft_putstr(" octets\n");
 }

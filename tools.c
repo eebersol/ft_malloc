@@ -24,29 +24,17 @@ void	*smap(size_t len)
 t_zone	*fix_zone_size(size_t size_total, size_t size)
 {
 	t_zone_type type;
-	size_t test;
 
 	type = get_type(size);
-	test = 0;
-
 	if (type == TINY)
-	{
-
-		return ((t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * size_total)));
-	}
+		return ((t_zone *)smap((sizeof(t_zone))
+			+ ((sizeof(int) + TINY_BLOCK) * size_total)));
 	else if (type == SMALL)
-		return ((t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + SMALL_BLOCK) * size_total)));
+		return ((t_zone *)smap((sizeof(t_zone))
+			+ ((sizeof(int) + SMALL_BLOCK) * size_total)));
 	else
-		return ((t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + size))));
-
-
-
-	// zone = get_type(size) == TINY ? (t_zone *)smap((sizeof(t_zone)) + ((sizeof(int) + TINY_BLOCK) * size_total)) : 0;
-	// zone = get_type(size) == SMALL ? (t_zone *)smap((sizeof(t_zone))
-	// 						+ ((sizeof(int) + SMALL_BLOCK) * size_total)) :
-	// 								(t_zone *)smap((sizeof(t_zone))
-	// // 									+ ((sizeof(int) + size)));
-	// return (zone);
+		return ((t_zone *)smap((sizeof(t_zone))
+			+ ((sizeof(int) + size))));
 }
 
 t_zone	*create_zone(size_t size)
@@ -57,7 +45,7 @@ t_zone	*create_zone(size_t size)
 	void	*begin;
 	int		i;
 
-	i = 0;	
+	i = 0;
 	size_total = get_nbr_block(size);
 	base = recover_base();
 	zone = fix_zone_size(size_total, size);
@@ -70,7 +58,7 @@ t_zone	*create_zone(size_t size)
 	while (i++ < (int)zone->nbr_block)
 	{
 		*(int*)begin = 0;
-		begin += get_size_type(zone->type) + sizeof(int);
+		begin += sizeof(int) + get_size_type(zone->type);
 	}
 	return (zone);
 }
