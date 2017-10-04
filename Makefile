@@ -28,7 +28,8 @@ SRC 	:=  malloc.c \
 			tools_lib.c \
 			show_alloc_mem.c \
 			free.c \
-			realloc.c
+			realloc.c \
+			show_bis.c 
 
 OBJ 	:= $(SRC:.c=.o)
 
@@ -40,8 +41,6 @@ $(NAME):  $(OBJ)
 	@$(CC) -shared -o $(NAME) $(OBJ)
 	@ln -s $(NAME) libft_malloc.so
 	@echo "$(NAME) compiled\033[0m"
-	@gcc main.c $(NAME)
-	@./a.out
 
 %.o : %.c
 	@$(CC) -c $(CFLAGS) $< -I./includes/
@@ -60,5 +59,9 @@ allclean :
 	@/bin/rm -f libft_malloc.so
 	@/bin/rm -f $(OBJ)
 	@echo "\033[31m$(NAME) objects deleted\033[0m"
+
+test : re
+	@gcc main.c $(NAME)
+	@./a.out
 
 re : fclean all 

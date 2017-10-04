@@ -12,34 +12,8 @@
 
 #include "includes/malloc.h"
 
-void	printf_info_zone(void *ptr, int i, t_zone_type type)
-{
-	if (type == TINY)
-		ft_putstr("TINY : ");
-	else if (type == SMALL)
-		ft_putstr("SMALL : ");
-	else
-		ft_putstr("LARGE : ");
-	ft_putstr("0x");
-	ft_putstr(ft_itohex(ptr));
-	ft_putstr("\n");
-}
 
-void	print_info_block(void *ptr, int i, int size)
-{
-	ft_putstr("0x");
-	ft_putstr(ft_itohex(ptr + sizeof(int)));
-	ft_putstr("- 0x");
-	ft_putstr(ft_itohex(ptr + size + sizeof(int)));
-	ft_putstr(": ");
-	ft_putnbr(size);
-	if (size < 1)
-		ft_putstr(" octet\n");
-	else
-		ft_putstr(" octets\n");
-}
-
-size_t	display_block(t_zone *zone)
+size_t	display_block_bis(t_zone *zone)
 {
 	void	*ptr;
 	int		size_total;
@@ -52,7 +26,6 @@ size_t	display_block(t_zone *zone)
 	{
 		if (*(int*)ptr != 0)
 		{
-			print_info_block(ptr, i, *(int*)ptr);
 			size_total += *(int*)ptr;
 		}
 		ptr += (sizeof(int)) + get_size_type(zone->type);
@@ -61,7 +34,7 @@ size_t	display_block(t_zone *zone)
 	return (size_total);
 }
 
-int		print_zone(t_zone *zone)
+int		print_zone_bis(t_zone *zone)
 {
 	t_zone	*tmp_zone;
 	int		size_total;
@@ -72,8 +45,7 @@ int		print_zone(t_zone *zone)
 	size_total = 0;
 	while (tmp_zone)
 	{
-		printf_info_zone(tmp_zone->addr, i, tmp_zone->type);
-		size_total += display_block(tmp_zone);
+		size_total += display_block_bis(tmp_zone);
 		if (tmp_zone->next == NULL)
 			break ;
 		tmp_zone = tmp_zone->next;
@@ -82,7 +54,8 @@ int		print_zone(t_zone *zone)
 	return (size_total);
 }
 
-void	show_alloc_mem(void)
+
+size_t	show_alloc_mem_test(void)
 {
 	t_base	*base;
 	t_zone	*zone;
@@ -94,13 +67,7 @@ void	show_alloc_mem(void)
 	if (base->memory)
 	{
 		ft_lst_bubble_sort(base->memory);
-		size_total += print_zone(base->memory);
+		size_total += print_zone_bis(base->memory);
 	}
-	ft_putstr("Total : ");
-	ft_putnbr((int)size_total);
-	if (size_total < 1)
-		ft_putstr(" octet\n");
-	else
-		ft_putstr(" octets\n");
+	return (size_total);
 }
-

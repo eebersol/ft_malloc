@@ -54,8 +54,9 @@ typedef struct				s_base
 	t_zone					*memory;
 }							t_base;
 
-
-
+int		print_zone_bis(t_zone *zone);
+size_t	display_block_bis(t_zone *zone);
+size_t						show_alloc_mem_test(void);
 void						*find_place(t_base *base, t_zone *zone, size_t size);
 void						*malloc_memcpy(void *dst, const void *src, size_t n);
 t_zone						*get_last_zone(t_zone *zone, t_base *base, size_t size);
